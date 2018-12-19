@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    body, form, div, span, ul, ol, li, p, pre, dl, dt, dd, h1, h2, h3, h4, h5, h6, em, a, fieldset, legend, address, label, textarea, select, input, figure, table, th, td, b, i {
+      margin: 0;
+      padding: 0;
+    }
+
+    .clearfix:after {
+      content: "\200b";
+      display: block;
+      clear: both;
+      height: 0;
+    }
+
+    .banner_wrap {
+      width: 100%;
+      min-width: 960px;
+      height: 80px;
+      position: relative;
+    }
+
+    .login_wrap {
+      position: relative;
+      display: block;
+      margin: 130px auto 0;
+      width: 1000px;
+      background: #fff;
+    }
+
+    .rtx_top {
+      width: 100%;
+      min-width: 960px;
+      height: 80px;
+      background: #0b61b8;
+      z-index: 1;
+    }
+
+    .rtx_top .rtx_top_banner {
+      margin: 0 auto;
+      width: 960px;
+      height: 80px;
+    }
+
+    .login_con_show {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login_wrap .login_title .title {
+      display: block;
+      margin-left: 173px;
+      height: 25px;
+      width: 100%;
+    }
+
+    .login_con {
+      position: relative;
+      padding-top: 30px;
+      transition: margin-top 0.3s ease;
+    }
+
+    .login_normal {
+      float: left;
+      padding-left: 173px;
+      padding-right: 70px;
+      border-right: 1px solid #ddd;
+      width: 360px;
+    }
+
+    .login_normal .ipt_item {
+      width: 100%;
+      height: 40px;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .login_normal .ipt_item {
+      width: 100%;
+      height: 40px;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .login_normal .btn_wrap {
+      margin-top: 30px;
+    }
+
+    .login_normal .ipt_item .ipt {
+      border: 1px solid #6e7781;
+      background: #fff;
+      font-family: 'Arial', 'microsoft yahei';
+      font-size: 14px;
+      color: #474747;
+      height: 38px;
+      line-height: 38px;
+      width: 358px;
+      text-indent: 10px;
+      box-shadow: 0 0 0 30px #fff inset;
+    }
+
+    .btn_wrap .btn_login {
+      display: block;
+      height: 46px;
+      width: 100%;
+      background: #007fff;
+      color: #fff;
+      text-align: center;
+      line-height: 46px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      font-family: "microsoft yahei";
+    }
+
+    .login_qr_code {
+      position: relative;
+      float: right;
+      margin-right: 175px;
+      width: 164px;
+    }
+
+    .scan_success_area, .scan_alert_area {
+      display: block;
+      height: 166px;
+      width: 166px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: -1;
+      opacity: 0;
+      -moz-transition: opacity 0.2s linear;
+      -webkit-transition: opacity 0.2s linear;
+    }
+    #userName{
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+    }
+  </style>
+  <script>
+      var getDom = function(id){
+            return document.getElementById(id)
+      }
+      var tggle  =  function(tar,tar1){
+            getDom(tar).style.display='none'
+            getDom(tar1).style.display='block'
+      }    
+      var getCookie = function(cookieName) {
+            var strCookie = document.cookie;
+            var arrCookie = strCookie.split("; ");
+            for(var i = 0; i < arrCookie.length; i++){
+                var arr = arrCookie[i].split("=");
+                if(cookieName == arr[0]){
+                    return arr[1];
+                }
+            }
+            return "";
+      } 
+      var writeCookie =  function  (name, value, hours){
+            var expire = "";
+            if (hours != null){
+                expire = new Date ((new Date ()).getTime () + hours * 3600000);
+                expire = "; expires=" + expire.toGMTString ();
+            }
+            document.cookie = name + "=" + escape (value) + expire;
+      }   
+  </script>
+</head>
+<body>
+<div class="wrap">
+  <div class="banner_wrap">
+    <div class="rtx_top">
+      <div class="rtx_top_banner">
+      </div>
+    </div>
+  </div>
+  <div class="login_wrap">
+    <div class="login_title">
+      <h1 class="title">Tencent腾讯 企业门户</h1>
+    </div>
+    <div class="login_con_show">
+      <form action="/login" method="post" id='login'>
+        <div class="login_con login_con_normal clearfix">
+          <div class="login_normal">
+            <div class="ipt_item ipt_name ipt_item_focus">
+              <input type="text" id="txtLoginName" name="staffname" tabindex="1" class="ipt" value=""
+                     placeholder="英文ID">
+            </div>
+            <div class="ipt_item ipt_password ipt_item_focus">
+              <input name="staffpass" type="password" id="txtPassword" tabindex="2" class="ipt" value=""
+                     placeholder="PIN+TOKEN">
+            </div>
+            <div class="btn_wrap">
+              <input type="submit" name="ibnLogin" value="登 录" class="btn_login">
+            </div>
+          </div>
+          <div class="login_qr_code">
+            <div class="scan_success_area">
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="login_con login_con_normal clearfix" id='cancle'>
+          <div class="login_normal">
+            <div class="ipt_item ipt_name ipt_item_focus">
+                <h3 id="userName"></h3>
+            </div>
+            <div class="btn_wrap">
+                <input type="submit" name="ibnLogin" value="注 销" class="btn_login" id='btn_cancle'>
+            </div>
+          </div>
+          <div class="login_qr_code">
+            <div class="scan_success_area">
+            </div>
+          </div>
+        </div>      
+    </div>
+    <div class="scan_guide"></div>
+  </div>
+</div>
+</body>
+<script>
+    var isLogin = getCookie('staffname');
+    if(isLogin){
+        tggle('login','cancle')
+        getDom('userName').innerHTML = 'hi~'+ ' ' + isLogin    
+    }else{
+        tggle('cancle','login')
+    } 
+    getDom('btn_cancle').onclick = function(){
+        writeCookie("staffname",'', -1);
+        tggle('cancle','login')
+    }      
+</script>
+</html>

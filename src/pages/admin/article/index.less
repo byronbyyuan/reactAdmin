@@ -1,0 +1,35 @@
+.Article{
+    &_body{
+      &_title{
+        text-align: center;
+        h2{
+          color: @mainColor;
+        }
+      }
+      &_content{
+        padding-top: 20px;
+      }
+      img{
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+      }
+      .hidden{
+        position: absolute;
+        top: -90px;
+        opacity: -1;
+      }
+      .placeError{
+        .ant-form-explain{
+          position: absolute;
+          bottom: 20px;
+        }
+      }
+      .btn_center{
+        text-align: center;
+        button{
+          margin: 0px 10px;
+        }
+      }
+    }
+  }

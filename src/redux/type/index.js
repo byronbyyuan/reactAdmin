@@ -1,0 +1,11 @@
+export const SETUSER = 'SETUSER';
+
+export const DElUSER = 'DELUSER';
+
+export const INCREMENT_COUNTER = 'INCREMENT_COUNTER'
+
+export const DECREMENT_COUNTER = 'DECREMENT_COUNTER'
+
+export const CLOSECOMMENTS = 'CLOSECOMMENTS'
+
+export const OPENCOMMENTS = 'OPENCOMMENTS'

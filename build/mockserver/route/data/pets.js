@@ -1,0 +1,30 @@
+module.exports = {
+    petList:[
+        {
+            categoryID:10,
+            id:1,
+            name:"哈士奇",
+            price:"32345",
+            remark:"哈士奇送祝福"        
+        },
+        {
+            categoryID:9,
+            id:2,
+            name:"佩奇",
+            price:"99999",
+            remark:"社会佩奇"        
+        }        
+    ],
+    categoryList:[
+        {
+            id:10,
+            name:'dog',
+            remark:'dog',
+        },
+        {
+            id:9,
+            name:'pig',
+            remark:'pig',
+        }
+    ]
+}
