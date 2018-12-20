@@ -6,11 +6,12 @@
 /dist
 # testing
 /coverage
+/build/dll
 
 
 
 # misc
-.idea
+.idea`
 .DS_Store
 .env.local
 .env.development.local
