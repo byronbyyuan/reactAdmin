@@ -12,6 +12,15 @@ const api = {
     }
 }
 
+
+export const post = (name,params)=>{
+    return http['post'](api['post'][name],params)
+}
+
+export const get = (name,params)=>{
+    return http['post'](api['post'][name],params)
+}
+
 export default (name,params = {},methods = false) => {
     if(!methods){
         for(let key in api){

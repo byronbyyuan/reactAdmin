@@ -3,6 +3,7 @@ title 环境启动
 color 03
 mode con cols=115 lines=35
 SET SourceFile=\node_modules
+SET DllFile=\build\dll
 :START
 ECHO.
 Echo                  ==========================================================================
@@ -22,5 +23,6 @@ if exist %cd%%SourceFile% (
     npm i
     echo 依赖下载完成，环境启动中    
 )
-npm start
 
+@echo off
+dir /a /b %cd%%DllFile%|findstr .>nul 2>nul && npm run dev || npm start
