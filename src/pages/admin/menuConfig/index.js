@@ -16,28 +16,28 @@ const treeData = {
       '0':{
         name: "数据",
         id: '11',
-        url:"/yby/admin/index",
+        url:"/admin/index",
         type: 2,
         readOnly: false
       },
       "1":{
         name: "列表",
         id: '12',
-        url: "/yby/admin/list",
+        url: "/admin/list",
         type: 2,
         readOnly: false
       },
       "2": {
         name: "分类",
         id: '13',
-        url: "/yby/admin/category",
+        url: "/admin/category",
         type: 2,
         readOnly: false
       },
       "3": {
         name: "文章",
         id: '14',
-        url: "/yby/admin/article",
+        url: "/admin/article",
         type: 2,
         readOnly: false
       }
@@ -46,7 +46,7 @@ const treeData = {
   '1':{
     name: "菜单配置",
     id: '2',
-    url: "/yby/admin/menuConfig",
+    url: "/admin/menuConfig",
     type: 2,
     readOnly: true
   }

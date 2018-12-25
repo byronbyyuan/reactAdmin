@@ -2,34 +2,53 @@ import React, { Component } from 'react'
 import { Layout, Menu, Breadcrumb, Icon , Dropdown} from 'antd';
 const { SubMenu, Item } = Menu;
 const { Header, Content, Sider } = Layout;
-import { Link } from 'react-router-dom'
+import {connect} from 'react-redux'
+import {user} from '../../redux/actions/index'
+import { Link ,withRouter} from 'react-router-dom'
 import './index.less'
+
+// import {browserHistory} from 'react-router'
 {/* <Icon type="poweroff" theme="outlined" /> */ }
 {/* <Icon type="lock" theme="outlined" /> */ }
-const menu = (
-  <Menu>
-    <Menu.Item>
+const menu = (logOut)=>{
+  return (
+    <Menu>
+    {/* <Menu.Item>
       <Icon type="lock" theme="outlined" />
       <span className='setting_label'>锁屏</span>
-    </Menu.Item>
+    </Menu.Item> */}
     <Menu.Item>
       <Icon type="poweroff" theme="outlined" />
-      <span className='setting_label'>注销</span>
+      <span className='setting_label' onClick={logOut}>注销</span>
     </Menu.Item>
-  </Menu>
-);
-export default class Admin extends Component {
+  </Menu>    
+  )
+};
+class Admin extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       treeData:''
     }
-  }
+  };
   componentDidMount(){
+    console.log(this.props,'///////')
+    this.get('getUser').then(res=>{
+      this.props.setUser(res)
+    })
     this.setState({
       treeData: JSON.parse(localStorage.getItem('tree'))
     })
+  }
+  logOut(p){
+    console.log('1111111',this,p)
+    this.get('logOut').then(
+      res=>{
+        console.log(this)
+        this.props.history.push('/')
+      }
+    )
   }
   render() {
     let treeData = this.state.treeData
@@ -45,9 +64,9 @@ export default class Admin extends Component {
               </div>
               <div className='adminHead_userInfo'>
                 <div className='userInfo'>
-                  <span className='name'>yby</span>
+                  <span className='name'>{this.props.user.name}</span>
                   <img src={require('../../assets/image/header1.png')} alt='' />
-                  <Dropdown overlay={menu}>
+                  <Dropdown overlay={menu(this.logOut.bind(this,this.props))}>
                     <a className="ant-dropdown-link" href="#">
                       <Icon type="setting" theme="outlined" />
                     </a>
@@ -107,3 +126,13 @@ export default class Admin extends Component {
     )
   }
 }
+
+const mapStateToProps = (state) => ({
+  user:state.user
+})
+
+const mapDispatchToProps = {
+  ...user
+}
+
+export default  withRouter(connect(mapStateToProps,mapDispatchToProps)(Admin))

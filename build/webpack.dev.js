@@ -78,7 +78,7 @@ module.exports = {
     devServer: {
         clientLogLevel: 'warning',
         historyApiFallback: true,
-        before: mockserver,
+        // before: mockserver,
         inline: true,
         hot: true,
         contentBase: false,
@@ -93,7 +93,8 @@ module.exports = {
         publicPath: '/',
         proxy: { //正式的接口地址
             '/api': {
-                target: "http://mycode.free.idcfengye.com"
+                target: "http://mycode.free.idcfengye.com/",
+                changeOrigin:true
             },
         },
         watchOptions: {

@@ -5,15 +5,45 @@
     background: white;
     &_body{
         width: 400px;
-        margin: auto;
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        height: 300px;
-        padding: 50px;
+        margin: 150px auto;
+        // position: absolute;
+        // top: 0;
+        // left: 0;
+        // bottom: 0;
+        // right: 0;
+        // height: 300px;
+        padding: 20px 50px;
         box-shadow: 3px 0 16px 0 rgba(0,0,0,0.1);
+        .login_tab{
+            overflow: hidden;
+            text-align: center;
+            ul{ 
+                display: inline-block;
+                overflow: hidden;
+                li{
+                    float: left;
+                    margin-left: 20px;
+                    cursor: pointer;
+                }
+                li::after{
+                    margin-top: 3px;
+                    content: "";
+                    height: 2px;
+                    width: 100%;
+                    display: block;
+                }
+                li:hover{
+                    color: #1890ff;
+                }
+                .active{
+                    color: #1890ff;
+                }
+                .active::after{
+                    box-shadow: 0 1px 5px 0 #1890ff;
+                    background: #1890ff;
+                }
+            }
+        }
     }
     .btn-body{
         text-align: center;

@@ -1,0 +1,48 @@
+.login {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: white;
+}
+.login_body {
+  width: 400px;
+  margin: 150px auto;
+  padding: 20px 50px;
+  box-shadow: 3px 0 16px 0 rgba(0, 0, 0, 0.1);
+}
+.login_body .login_tab {
+  overflow: hidden;
+  text-align: center;
+}
+.login_body .login_tab ul {
+  display: inline-block;
+  overflow: hidden;
+}
+.login_body .login_tab ul li {
+  float: left;
+  margin-left: 20px;
+  cursor: pointer;
+}
+.login_body .login_tab ul li::after {
+  margin-top: 3px;
+  content: "";
+  height: 2px;
+  width: 100%;
+  display: block;
+}
+.login_body .login_tab ul li:hover {
+  color: #1890ff;
+}
+.login_body .login_tab ul .active {
+  color: #1890ff;
+}
+.login_body .login_tab ul .active::after {
+  box-shadow: 0 1px 5px 0 #1890ff;
+  background: #1890ff;
+}
+.login .btn-body {
+  text-align: center;
+}
+.login .btn-body button {
+  width: 100%;
+}

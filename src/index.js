@@ -16,13 +16,16 @@ import Login from './pages/admin/Login'
 import Admin from './pages/admin'
 import {Provider} from 'react-redux'
 import store from './redux'
-import ajax from './server'
+import ajax,{post,get} from './server'
 import './index.less'
 Component.prototype.ajax = ajax
+Component.prototype.post = post
+Component.prototype.get = get
 Component.prototype.Util = Util
 
 
 const AdminComponent = ({ match }) => {
+    console.log('4444444444444',match)
     return (
         <Admin>
             <Route path={match.path + "/index"} exact component={Index}></Route>

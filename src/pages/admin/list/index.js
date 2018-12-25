@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import './index.less'
 import { Form, Row, Col, Input, Button, Icon, Select, DatePicker, Radio, Table, Divider } from 'antd';
+import {user} from '../../../redux/actions/index'
 const { RangePicker } = DatePicker;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
@@ -22,29 +23,29 @@ const columns = [
     align:'center',
     title: '分类',
     dataIndex: 'age',
-    key: 'age'
+    key: 'type'
   }, {
     align: 'center',
     title: '类型',
     dataIndex: 'age',
-    key: 'age'
+    key: 'style'
   }, {
     align: 'center',
     title: '发布时间',
     dataIndex: 'age',
-    key: 'age',
+    key: 'time',
     sorter: (a, b) => a.age - b.age
   },{
     align: 'center',
     title: '浏览量',
     dataIndex: 'age',
-    key: 'age',
+    key: 'num',
     sorter: (a, b) => a.age - b.age
   }, {
     align: 'center',
     title: '操作',
     dataIndex: 'age',
-    key: 'age',
+    key: 'control',
     render:(text, record) => (
       <span>
         <a href="javascript:;">编辑 {record.lastName}</a>
@@ -110,6 +111,11 @@ export class AdminList extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       console.log('Received values of form: ', values);
+      this.get().then(
+        res=>{
+          
+        }
+      )
     });
   }
   disabledDate(moment){
@@ -140,7 +146,16 @@ export class AdminList extends Component {
                       )}
                     </FormItem>
                   </Col>
-                  <Col span={8}>
+                  <Row style={{float:'left',marginTop:'4px'}}>
+                      <Col span={24} style={{ textAlign: 'right' }}>
+                          <Button type="primary" htmlType="submit">搜索</Button>
+                          <Button style={{ marginLeft: 18 }} onClick={this.handleReset.bind(this)}>
+                            重置
+                          </Button>
+                      </Col>
+                  </Row>
+
+                  {/* <Col span={8}>
                     <FormItem
                         {...formItemLayout}
                         label="分类"
@@ -156,8 +171,8 @@ export class AdminList extends Component {
                         </Select>
                         )}
                     </FormItem>
-                  </Col>
-                  <Col span={8}>
+                  </Col> */}
+                  {/* <Col span={8}>
                     <FormItem
                         {...formItemLayout}
                         label="类型"
@@ -170,8 +185,8 @@ export class AdminList extends Component {
                         </RadioGroup>
                       )}
                     </FormItem>
-                  </Col>
-                  <Col span={8}>
+                  </Col> */}
+                  {/* <Col span={8}>
                     <FormItem
                         {...formItemLayout}
                         label="状态"
@@ -184,22 +199,14 @@ export class AdminList extends Component {
                       </RadioGroup>
                     )}
                     </FormItem>
-                  </Col>
+                  </Col> */}
                 </div>
               }</Row>
-              <Row>
-                <Col span={24} style={{ textAlign: 'right' }}>
-                  <Button type="primary" htmlType="submit">搜索</Button>
-                  <Button style={{ marginLeft: 18 }} onClick={this.handleReset.bind(this)}>
-                    重置
-                  </Button>
-                </Col>
-              </Row>
             </Form>
           </div>
-          <div className='Admin_chat'>
+          {/* <div className='Admin_chat'>
             <div className='main' style={{ width: 400, height: 400 }} ref="chatMain"></div>
-          </div>
+          </div> */}
           <div className='Admin_table'>
             <Table columns={columns} dataSource={data} bordered pagination={this.state.pagination} loading={this.state.loading}/>
           </div>
@@ -208,4 +215,11 @@ export class AdminList extends Component {
   }
 }
 const WrappedAdminList = Form.create()(AdminList);
+const mapStateToProps = (state) => ({
+  data:state.data
+})
+
+const mapDispatchToProps = {
+  ...user
+}
 export default WrappedAdminList

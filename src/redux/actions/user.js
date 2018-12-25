@@ -1,4 +1,4 @@
-import { SETUSER,DELUSER } from '../type'
+import { SETUSER,DELUSER,USERDATA } from '../type'
 
 const setUser = data => {
     return {
@@ -14,7 +14,14 @@ const delUser = data => {
     }
 }
 
+const userData = data => {
+    return {
+        type:USERDATA,
+        data
+    }
+}
 module.exports = {
     setUser,
-    delUser
+    delUser,
+    userData
 }
