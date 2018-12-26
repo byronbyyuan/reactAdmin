@@ -102,7 +102,7 @@ export class AdminList extends Component {
     }
   }
   componentDidMount() {
-
+    
   }
   handelChange(pagination, filters, sorter){
 
