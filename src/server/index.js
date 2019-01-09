@@ -4,30 +4,35 @@ import * as http  from './http'
 //api 区分请求 地址管理
 const api = {
     post:{
-        signUp:'/user/signUp',
-        signIn:'/user/signIn',
-        createRole:'/role/createRole',
-        updateRole:'/role/updateRole',
+        createRole:'/role/createRole', //创建角色
+        updateRole:'/role/updateRole', //更新角色
         createUserRole:'/userRole/createUserRole', //设置关联角色
         updateUserRole:'/userRole/updateUserRole', //更新关联角色
-        getStaff:config.getStaffUrl,//获取用户信息
-        getStaffRoles:config.getStaffRolesUrl//获取用户角色
+        signUp:'/user/signUp',    // 注册
+        signIn:'/user/signIn',    // 登录   
+        createMenu:'/menu/createMenu', // 创建菜单
+        updateMenu:'/menu/updateMenu', // 更新菜单
+        createCategory:'/book/createCategory',  // 创建博客分类
+        updateCategory:'/book/updateCategory' // 创建博客分类
     },
     get:{
-        getUser:'/user/getUser',
-        logOut:'/user/logOut',
-        getRoleList:'/role/getRoleList',
-        deleteRole:'/role/deleteRole',
+        getRoleList:'/role/getRoleList', //获取角色列表
+        deleteRole:'/role/deleteRole', //删除角色
         getUserRoleList:'/userRole/getUserRoleList', //获取已有关联角色
         deletUserRole:'/userRole/deletUserRole', //删除关联角色
-        getMyMenuList:'/menu/getMyMenuList',//获取用户名下菜单
-        getRole:'/role/getRole'  //获取角色信息
-    }
+        getRole:'/role/getRole',  //获取角色信息
+        getUser:'/user/getUser', // 获取用户信息
+        logOut:'/user/logOut',    // 注销
+        getQiniuToken:'/common/getQiniuToken', // 获取七牛token
+        getMyMenuList:'/menu/getMyMenuList', // 获取我创建的菜单
+        deleteMenu:'/menu/deleteMenu', // 删除我的菜单
+        getCategoryList:'/book/getCategoryList', // 获取博客分类
+        deleteCategory:'/book/deleteCategory'// 删除博客分类
+}
 }
 
-
-export const post = (name,params)=>{
-    return http['post'](api['post'][name],params)
+export const post = (name,data)=>{
+    return http['post'](api['post'][name],data)
 }
 
 export const get = (name,params)=>{

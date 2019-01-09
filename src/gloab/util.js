@@ -69,3 +69,30 @@ export const removeEmoji = str =>{
     }
     return str;
 }
+
+export const getNowFormatDate = (format="YY-MM-DD") => {
+    const setFormat = (str) =>{
+        if(str >= 1 && str <= 9) return  "0" + str;
+        return str
+    }
+    var date = new Date(),
+    seperator1 = "-",
+    seperator2 = ":",
+    year =  date.getFullYear(),
+    month = setFormat(date.getMonth() + 1),
+    strDate = setFormat(date.getDate()),
+    Hours = setFormat(date.getHours()),
+    Minutes = setFormat(date.getMinutes()),
+    Seconds = setFormat(date.getSeconds()); 
+    switch(format) {
+        case "YY-MM-DD HH-MM":
+        return year+seperator1+ month + seperator1 + strDate + " " + Hours + seperator2 + Minutes
+        break;
+        case "YY-MM-DD HH-MM-SS":
+        return year + seperator1 + month + seperator1 + strDate + " " + Hours + seperator2 + Minutes+ seperator2 + Seconds
+        break;
+        default:{
+            return year+seperator1+ month + seperator1 + strDate
+        }
+    }
+}

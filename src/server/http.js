@@ -46,7 +46,6 @@ axios.interceptors.request.use(req => {
     return req
     
 }, error => {
-    console.log('111111')
     errAlert(error);
     return new Promise(() => {});
 })

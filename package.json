@@ -20,6 +20,7 @@
     "axios": "^0.18.0",
     "highlight": "^0.2.4",
     "marked": "^0.5.2",
+    "qiniu-js": "^2.5.3",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-redux": "^5.0.7",

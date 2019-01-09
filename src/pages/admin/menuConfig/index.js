@@ -1,81 +1,37 @@
 import React, { Component } from 'react'
 
 import './index.less'
-import { Modal, Tree, Button, Popconfirm} from 'antd';
+import { Modal, Tree, Button, Popconfirm } from 'antd';
 import AddFrom from './AddFrom'
 const DirectoryTree = Tree.DirectoryTree;
 const TreeNode = Tree.TreeNode;
-const treeData = {
-  '0':{
-    name:"博客系统",
-    id:'1',
-    url:"",
-    type:1,
-    readOnly:false,
-    childMenu:{
-      '0':{
-        name: "数据",
-        id: '11',
-        url:"/admin/index",
-        type: 2,
-        readOnly: false
-      },
-      "1":{
-        name: "列表",
-        id: '12',
-        url: "/admin/list",
-        type: 2,
-        readOnly: false
-      },
-      "2": {
-        name: "分类",
-        id: '13',
-        url: "/admin/category",
-        type: 2,
-        readOnly: false
-      },
-      "3": {
-        name: "文章",
-        id: '14',
-        url: "/admin/article",
-        type: 2,
-        readOnly: false
-      }
-    }
-  },
-  '1':{
-    name: "菜单配置",
-    id: '2',
-    url: "/admin/menuConfig",
-    type: 2,
-    readOnly: true
-  },
-  '2':{
-    name:"我的菜单",
-    id:'19',
-    url:"/admin/myMenu",
-    type:1,
-    readOnly: false
-  }
-}
-localStorage.setItem('tree',JSON.stringify(treeData))
 class menuConfig extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
+      treeData: [],
       visible: false,
-      title:'添加',
-      item:""
+      title: '添加',
+      item: ""
     }
   }
-  addSubmit(data){
-    console.log(this.state.item,data)
+  async componentDidMount() {
+    let treeData = await this.get('getMyMenuList')
+    console.log(treeData)
+    this.setState({ treeData })
   }
-  onAdd(item,event){
-    console.log('add',item)
+  async addSubmit(data) {
+    if (this.state.item) {
+      data.parentId = this.state.item.id
+    }
+    let result = await this.post('createMenu', data)
+
+  }
+  onAdd(item, event) {
+    console.log('add', item)
     event.stopPropagation();
-    this.showModal('添加',item)
+    this.showModal('添加', item)
     return false
   }
   onDelete(item, event) {
@@ -86,57 +42,58 @@ class menuConfig extends Component {
   setFormChild(child) {
     this.child = child
   }
-  valid (data) {
+  valid(data) {
     console.log(data)
-    if(data){
+    if (data) {
       this.onHide()
       this.state.title == '添加' ? this.addSubmit(data) : this.editSubmit(data)
     }
   }
-  handleOk (){
+  handleOk() {
     this.child.handleSubmit()
   }
-  editSubmit(data){
+  editSubmit(data) {
     console.log(data)
   }
-  onEdit (item,event){
-    this.showModal('编辑',item)
+  onEdit(item, event) {
+    this.showModal('编辑', item)
     event.stopPropagation();
   }
-  showModal(title,item){
+  showModal(title, item) {
     this.setState({
-      visible:true,
-      title:title,
-      item:item
+      visible: true,
+      title: title,
+      item: item
     })
   }
-  onHide(){
+  onHide() {
     this.setState({
       visible: false
     })
+    this.child.props.form.resetFields()
   }
-  renderTreeNodes(data){
+  renderTreeNodes(data) {
     const items = item => {
       return (
         <div className='menuConfigItem'>
-          <span>{item.name}</span>
-          <p className={['action',item.type==1 && 'actionType'].join(' ')}>
+          <span>{item.menuName}</span>
+          <p className={['action', item.type == 1 && 'actionType'].join(' ')}>
             <span onClick={this.onEdit.bind(this, item)}>编辑</span>
             {
-              item.type == 1  ?
+              item.type == 1 ?
                 <span onClick={this.onAdd.bind(this, item)}>添加</span>
                 : item.childMenu ? '' :
-                <Popconfirm title="确定删除吗?" onConfirm={this.onDelete.bind(this, item)} okText="确定" cancelText="取消">
-                  <span onClick={this.onDelete.bind(this, item)}>删除</span>
-                </Popconfirm>
+                  <Popconfirm title="确定删除吗?" onConfirm={this.onDelete.bind(this, item)} okText="确定" cancelText="取消">
+                    <span onClick={this.onDelete.bind(this, item)}>删除</span>
+                  </Popconfirm>
             }
           </p>
         </div>
       )
     }
-    return Object.keys(data).map((key,index) => {
+    return Object.keys(data).map((key, index) => {
       let item = data[key]
-      let titleNode = item.readOnly ? item.name : items(item);
+      let titleNode = item.readOnly ? item.menuName : items(item);
       if (item.childMenu) {
         return (
           <TreeNode title={titleNode} isLeaf={item.type == 2} dataRef={item} key={item.id}>
@@ -144,32 +101,24 @@ class menuConfig extends Component {
           </TreeNode>
         );
       }
-      return <TreeNode title={titleNode} isLeaf={item.type==2} key={item.id}/>;
+      return <TreeNode title={titleNode} isLeaf={item.type == 2} key={item.id} />;
     });
   }
   render() {
     return (
       <div className='menuConfig'>
         <div className='addMenu'>
-          <Button type="primary"  onClick={this.showModal.bind(this,'添加',false)}>添加菜单</Button>
+          <Button type="primary" onClick={this.showModal.bind(this, '添加', false)}>添加菜单</Button>
         </div>
         <div className='menuTree'>
-          <DirectoryTree
-              multiple
-              defaultExpandAll
-              onSelect={this.onSelect}
-              onExpand={this.onExpand}
+          <DirectoryTree multiple defaultExpandAll onSelect={this.onSelect} onExpand={this.onExpand}
           >
-            {this.renderTreeNodes(treeData)}
+            {this.renderTreeNodes(this.state.treeData)}
           </DirectoryTree>
         </div>
-        <Modal
-            title={this.state.title}
-            visible={this.state.visible}
-            onOk={this.handleOk.bind(this)}
-            onCancel={this.onHide.bind(this)}
+        <Modal title={this.state.title} visible={this.state.visible} onOk={this.handleOk.bind(this)} onCancel={this.onHide.bind(this)}
         >
-          <AddFrom setChild={this.setFormChild.bind(this)} valid={this.valid.bind(this)} item={this.state.title=='编辑' ? this.state.item : ''}></AddFrom>
+          <AddFrom setChild={this.setFormChild.bind(this)} valid={this.valid.bind(this)} item={this.state.title == '编辑' ? this.state.item : ''}></AddFrom>
         </Modal>
       </div>
     );
