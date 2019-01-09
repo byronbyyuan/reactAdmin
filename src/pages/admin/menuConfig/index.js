@@ -5,65 +5,29 @@ import { Modal, Tree, Button, Popconfirm} from 'antd';
 import AddFrom from './AddFrom'
 const DirectoryTree = Tree.DirectoryTree;
 const TreeNode = Tree.TreeNode;
-const treeData = {
-  '0':{
-    name:"博客系统",
-    id:'1',
-    url:"",
-    type:1,
-    readOnly:false,
-    childMenu:{
-      '0':{
-        name: "数据",
-        id: '11',
-        url:"/admin/index",
-        type: 2,
-        readOnly: false
-      },
-      "1":{
-        name: "列表",
-        id: '12',
-        url: "/admin/list",
-        type: 2,
-        readOnly: false
-      },
-      "2": {
-        name: "分类",
-        id: '13',
-        url: "/admin/category",
-        type: 2,
-        readOnly: false
-      },
-      "3": {
-        name: "文章",
-        id: '14',
-        url: "/admin/article",
-        type: 2,
-        readOnly: false
-      }
-    }
-  },
-  '1':{
-    name: "菜单配置",
-    id: '2',
-    url: "/admin/menuConfig",
-    type: 2,
-    readOnly: true
-  }
-}
-localStorage.setItem('tree',JSON.stringify(treeData))
+
 class menuConfig extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
+      treeData:[],
       visible: false,
       title:'添加',
       item:""
     }
   }
-  addSubmit(data){
-    console.log(this.state.item,data)
+  async componentDidMount(){
+    let treeData = await this.get('getMyMenuList')
+    console.log(treeData)
+    this.setState({treeData})      
+  }
+  async addSubmit(data){
+    if(this.state.item){
+      data.parentId = this.state.item.id
+    }
+    let result = await this.post('createMenu',data)
+    
   }
   onAdd(item,event){
     console.log('add',item)
@@ -107,12 +71,13 @@ class menuConfig extends Component {
     this.setState({
       visible: false
     })
+    this.child.props.form.resetFields()
   }
   renderTreeNodes(data){
     const items = item => {
       return (
         <div className='menuConfigItem'>
-          <span>{item.name}</span>
+          <span>{item.menuName}</span>
           <p className={['action',item.type==1 && 'actionType'].join(' ')}>
             <span onClick={this.onEdit.bind(this, item)}>编辑</span>
             {
@@ -129,10 +94,12 @@ class menuConfig extends Component {
     }
     return Object.keys(data).map((key,index) => {
       let item = data[key]
-      let titleNode = item.readOnly ? item.name : items(item);
+      let titleNode = item.readOnly ? item.menuName : items(item);
       if (item.childMenu) {
         return (
-          <TreeNode title={titleNode} isLeaf={item.type == 2} dataRef={item} key={item.id}>
+          <TreeNode title={titleNode} 
+            isLeaf={item.type == 2} 
+            dataRef={item} key={item.id}>
             {this.renderTreeNodes(item.childMenu)}
           </TreeNode>
         );
@@ -153,7 +120,7 @@ class menuConfig extends Component {
               onSelect={this.onSelect}
               onExpand={this.onExpand}
           >
-            {this.renderTreeNodes(treeData)}
+            {this.renderTreeNodes(this.state.treeData)}
           </DirectoryTree>
         </div>
         <Modal

@@ -10,20 +10,9 @@ class AddFrom extends React.Component {
     this.state = {
        name:'',
        type:1,
-       readOnly:false,
-       url:''
-    }
-  }
-  static getDerivedStateFromProps(props,state){
-    if(props.item){
-      return props.item
-    }else{
-      return {
-        name: '',
-        type: 1,
-        readOnly: false,
-        url: ''
-      }
+       readOnly:true,
+       url:'',
+       show:true,
     }
   }
   componentDidMount () {
@@ -44,12 +33,12 @@ class AddFrom extends React.Component {
   }
   render() {
     const { getFieldDecorator, getFieldValue} = this.props.form;
-    let { type, name, readOnly, url} = this.state
+    let { type, menuName, readOnly, url,show} = this.state
     return (
       <Form onSubmit={this.handleSubmit} 	className="login-form" ref='addForm'>
         <FormItem>
-          {getFieldDecorator('name', {
-            initialValue: name,
+          {getFieldDecorator('menuName', {
+            initialValue: menuName,
             rules: [{ required: true, message: '请填写菜单名称' }]
           })(
             <Input  placeholder="菜单名称" />
@@ -71,7 +60,7 @@ class AddFrom extends React.Component {
               <FormItem>
                 {getFieldDecorator('url', {
                   initialValue: url,
-                  rules: [{ required: true, message: '请填写菜单路径' }]
+                  rules: [{ required: true, message: '请填写菜单路径' },{pattern:/\/[a-zA-Z]/,message:'请填写正确的菜单路径'}]
                 })(
                   <Input placeholder="菜单路径" />
                   )}
@@ -80,11 +69,18 @@ class AddFrom extends React.Component {
           }
         <FormItem>
           {getFieldDecorator('readOnly', {
-            initialValue: readOnly
-          })(
-            <Checkbox>是否只读</Checkbox>
+              valuePropName: 'checked',
+            })(
+              <Checkbox>是否只读</Checkbox>
             )}
         </FormItem>
+        <FormItem>
+          {getFieldDecorator('show', {
+            initialValue: show,
+          })(
+            <Checkbox defaultChecked={true}>是否展示</Checkbox>
+            )}
+        </FormItem>        
       </Form>
     );
   }
