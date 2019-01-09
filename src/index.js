@@ -12,6 +12,8 @@ import Index from './pages/admin/chat'
 import AdminCategory from './pages/admin/category'
 import menuConfig from './pages/admin/menuConfig'
 import Login from './pages/admin/Login'
+import Role from './pages/myMenu/role'
+import RoleDetail from './pages/myMenu/roleDetails'
 
 import Admin from './pages/admin'
 import {Provider} from 'react-redux'
@@ -23,9 +25,7 @@ Component.prototype.post = post
 Component.prototype.get = get
 Component.prototype.Util = Util
 
-
 const AdminComponent = ({ match }) => {
-    console.log('4444444444444',match)
     return (
         <Admin>
             <Route path={match.path + "/index"} exact component={Index}></Route>
@@ -33,9 +33,12 @@ const AdminComponent = ({ match }) => {
             <Route path={match.path + "/list"} exact component={List}></Route>
             <Route path={match.path + '/category'} component={AdminCategory}></Route>
             <Route path={match.path + '/menuConfig'} component={menuConfig}></Route>
+            <Route path={match.path + '/myMenu'} component={Role}></Route>
+            <Route path={match.path + '/role'} component={RoleDetail}></Route>
         </Admin>
     )
 }
+
 ReactDom.render(
     <Provider store={store}>
         <Router>

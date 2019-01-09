@@ -2,7 +2,7 @@
 import { message } from 'antd';
 import { browserHistory } from 'react-router'
 axios.defaults.baseURL = config.baseUrl;
-axios.defaults.timeout = 5000
+axios.defaults.timeout = 20000
 const CancelToken = axios.CancelToken; //请求token
 
 const Success = 10001,notAuth = 10004,notice = 4//业务请求正确code,无权限code,需要向下传递的错误代码
@@ -56,9 +56,9 @@ axios.interceptors.response.use(response => {
     removePending(response.config);
     let result = response.data
     if (result.code === Success) { //正确请求      
-        return result.data
+        return result
     }else if(result.code === notAuth){
-        window.location.href = '/'
+       // if(location.pathname !== '/') window.location.href = '/'
     }
     errAlert(result.message);        
     return new Promise(() => {});

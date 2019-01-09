@@ -93,7 +93,7 @@ module.exports = {
         publicPath: '/',
         proxy: { //正式的接口地址
             '/api': {
-                target: "http://mycode.free.idcfengye.com/",
+                target: "http://mycode.free.idcfengye.com",
                 changeOrigin:true
             },
         },

@@ -1,27 +1,24 @@
 import React, { Component } from 'react'
-import { Layout, Menu, Breadcrumb, Icon , Dropdown} from 'antd';
+import { Layout, Menu, Breadcrumb, Icon, Dropdown } from 'antd';
 const { SubMenu, Item } = Menu;
 const { Header, Content, Sider } = Layout;
-import {connect} from 'react-redux'
-import {user} from '../../redux/actions/index'
-import { Link ,withRouter} from 'react-router-dom'
+import { connect } from 'react-redux'
+import { user } from '../../redux/actions/index'
+import { Link, withRouter } from 'react-router-dom'
 import './index.less'
 
-// import {browserHistory} from 'react-router'
-{/* <Icon type="poweroff" theme="outlined" /> */ }
-{/* <Icon type="lock" theme="outlined" /> */ }
-const menu = (logOut)=>{
+const menu = (logOut) => {
   return (
     <Menu>
-    {/* <Menu.Item>
+      {/* <Menu.Item>
       <Icon type="lock" theme="outlined" />
       <span className='setting_label'>锁屏</span>
     </Menu.Item> */}
-    <Menu.Item>
-      <Icon type="poweroff" theme="outlined" />
-      <span className='setting_label' onClick={logOut}>注销</span>
-    </Menu.Item>
-  </Menu>    
+      <Menu.Item onClick={logOut}>
+        <Icon type="poweroff" theme="outlined" />
+        <span className='setting_label'>注销</span>
+      </Menu.Item>
+    </Menu>
   )
 };
 class Admin extends Component {
@@ -29,23 +26,20 @@ class Admin extends Component {
     super(props)
 
     this.state = {
-      treeData:''
+      treeData: ''
     }
   };
-  componentDidMount(){
-    console.log(this.props,'///////')
-    this.get('getUser').then(res=>{
-      this.props.setUser(res)
+  componentDidMount() {
+    this.get('getUser').then(res => {
+      this.props.setUser(res.data)
     })
     this.setState({
       treeData: JSON.parse(localStorage.getItem('tree'))
     })
   }
-  logOut(p){
-    console.log('1111111',this,p)
+  logOut(p) {
     this.get('logOut').then(
-      res=>{
-        console.log(this)
+      res => {
         this.props.history.push('/')
       }
     )
@@ -66,7 +60,7 @@ class Admin extends Component {
                 <div className='userInfo'>
                   <span className='name'>{this.props.user.name}</span>
                   <img src={require('../../assets/image/header1.png')} alt='' />
-                  <Dropdown overlay={menu(this.logOut.bind(this,this.props))}>
+                  <Dropdown overlay={menu(this.logOut.bind(this, this.props))} placement='bottomCenter'>
                     <a className="ant-dropdown-link" href="#">
                       <Icon type="setting" theme="outlined" />
                     </a>
@@ -77,46 +71,44 @@ class Admin extends Component {
           </Header>
           <Layout>
             <Sider width={200} style={{ background: '#fff' }}>
-              <Menu
-                  mode="inline"
-                  style={{ height: '100%', borderRight: 0 }}
+              <Menu mode="inline" style={{ height: '100%', borderRight: 0 }}
               >
                 {
-                  Object.keys(treeData).map(item=>{
-                    if (treeData[item].childMenu){
+                  Object.keys(treeData).map(item => {
+                    if (treeData[item].childMenu) {
                       let child = treeData[item].childMenu
                       return (
                         <SubMenu key={treeData[item].id} title={<span><Icon type="user" />{treeData[item].name}</span>}>
-                            {
-                              Object.keys(child).map(item=>{
-                                return <Menu.Item key={child[item].id}>
-                                    <Link to={child[item].url}>{child[item].name}</Link>
-                                </Menu.Item>
-                              })
-                            }
+                          {
+                            Object.keys(child).map(item => {
+                              return <Menu.Item key={child[item].id}>
+                                <Link to={child[item].url}>{child[item].name}</Link>
+                              </Menu.Item>
+                            })
+                          }
                         </SubMenu>
                       )
                     }
-                     return <Menu.Item key={treeData[item].id}>
-                        <Icon type="inbox" />
-                        <span>
+                    return <Menu.Item key={treeData[item].id}>
+                      <Icon type="inbox" />
+                      <span>
 
-                          <Link to={treeData[item].url}>
-                           {treeData[item].name}
-                          </Link>
-                        </span>
-                      </Menu.Item>
+                        <Link to={treeData[item].url}>
+                          {treeData[item].name}
+                        </Link>
+                      </span>
+                    </Menu.Item>
                   })
                 }
               </Menu>
             </Sider>
-            <Layout style={{ padding: '0 24px 24px' }}>
+            <Layout style={{ padding: '0 24px 24px', minWidth: '860px' }}>
               <Breadcrumb style={{ margin: '16px 0' }}>
                 <Breadcrumb.Item>Home</Breadcrumb.Item>
                 <Breadcrumb.Item>List</Breadcrumb.Item>
                 <Breadcrumb.Item>App</Breadcrumb.Item>
               </Breadcrumb>
-              <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280,minWidth:1080 }}>
+              <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280, minWidth: 810 }}>
                 {this.props.children.length ? this.props.children : '欢迎登陆后台管理页'}
               </Content>
             </Layout>
@@ -128,11 +120,11 @@ class Admin extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  user:state.user
+  user: state.user
 })
 
 const mapDispatchToProps = {
   ...user
 }
 
-export default  withRouter(connect(mapStateToProps,mapDispatchToProps)(Admin))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Admin))

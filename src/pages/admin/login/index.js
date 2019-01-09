@@ -1,8 +1,10 @@
 import React from 'react'
-import {BrowserRouter as Router, Route} from 'react-router-dom'
 import {
   Form, Icon, Input, Button,message
 } from 'antd';
+import {connect} from 'react-redux'
+import {user} from '../../../redux/actions/index'
+import { Link ,withRouter} from 'react-router-dom'
 import './index.less'
 const FormItem = Form.Item;
 
@@ -18,7 +20,12 @@ class NormalLoginForm extends React.Component {
     }
   } 
   componentDidMount(){
-    console.log(this.props)
+    this.get('getUser').then(res=>{
+      if(res){
+        this.props.history.push('admin/index')
+        this.props.setUser(res.data)
+      }
+    })
   }
   handLogin(){
     this.setState({
@@ -54,7 +61,6 @@ class NormalLoginForm extends React.Component {
     }
   }
   handleSubmit(e){
-    console.log("9999999999",this.state)
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
@@ -63,9 +69,7 @@ class NormalLoginForm extends React.Component {
             this.props.history.push('admin/index')
           })
         }else{
-          console.log("dfsfdsfsdf")
           this.post('signIn',values).then(res=>{
-            console.log("res",res)
               message.success('注册成功');
               this.setState({
                 show: true
@@ -80,6 +84,7 @@ class NormalLoginForm extends React.Component {
     const { getFieldDecorator } = this.props.form;
     return (
         <div className='login'>
+          <div>{this.props.data.name}</div>
           <div className='login_body'>
             <div className = 'login_tab'>
                 <ul>
@@ -136,5 +141,11 @@ class NormalLoginForm extends React.Component {
 }
 
 const WrappedNormalLoginForm = Form.create()(NormalLoginForm);
+const mapStateToProps = (state) => ({
+  data:state.user
+})
 
-export default WrappedNormalLoginForm
+const mapDispatchToProps = {
+  ...user
+}
+export default  withRouter(connect(mapStateToProps,mapDispatchToProps)(WrappedNormalLoginForm))

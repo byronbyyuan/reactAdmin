@@ -49,6 +49,13 @@ const treeData = {
     url: "/admin/menuConfig",
     type: 2,
     readOnly: true
+  },
+  '2':{
+    name:"我的菜单",
+    id:'19',
+    url:"/admin/myMenu",
+    type:1,
+    readOnly: false
   }
 }
 localStorage.setItem('tree',JSON.stringify(treeData))

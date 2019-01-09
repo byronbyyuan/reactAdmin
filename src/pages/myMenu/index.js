@@ -1,7 +1,8 @@
+
 import React, { Component } from 'react'
 import './index.less'
 import { Form, Row, Col, Input, Button, Icon, Select, DatePicker, Radio, Table, Divider } from 'antd';
-import {user} from '../../../redux/actions/index'
+import {user} from '../../redux/actions/index'
 import {connect} from 'react-redux'
 import { Link ,withRouter} from 'react-router-dom'
 const { RangePicker } = DatePicker;
