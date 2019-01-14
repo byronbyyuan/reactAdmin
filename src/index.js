@@ -12,8 +12,9 @@ import Index from './pages/admin/chat'
 import AdminCategory from './pages/admin/category'
 import menuConfig from './pages/admin/menuConfig'
 import Login from './pages/admin/Login'
-import Role from './pages/myMenu/role'
-import RoleDetail from './pages/myMenu/roleDetails'
+import Role from './pages/myRole/role'
+import RoleDetail from './pages/myRole/roleDetails'
+import userRole from './pages/myRole/userLinkRole'
 
 import Admin from './pages/admin'
 import {Provider} from 'react-redux'
@@ -33,8 +34,9 @@ const AdminComponent = ({ match }) => {
             <Route path={match.path + "/list"} exact component={List}></Route>
             <Route path={match.path + '/category'} component={AdminCategory}></Route>
             <Route path={match.path + '/menuConfig'} component={menuConfig}></Route>
-            <Route path={match.path + '/myMenu'} component={Role}></Route>
+            <Route path={match.path + '/myRole'} component={Role}></Route>
             <Route path={match.path + '/role'} component={RoleDetail}></Route>
+            <Route path={match.path + '/UserRole'} component={userRole}></Route>
         </Admin>
     )
 }

@@ -26,16 +26,27 @@ class Admin extends Component {
     super(props)
 
     this.state = {
-      treeData: ''
+      treeData: [
+        { menuName: "菜单配置", url: "/admin/menuConfig" ,id:'-1',type:2},
+        { menuName: "我的角色", url: "/admin/myRole" ,id:'-2',type:2},
+        { menuName: "用户角色", url: "/admin/userRole" ,id:'-3',type:2}
+      ]
     }
+
   };
   componentDidMount() {
     this.get('getUser').then(res => {
       this.props.setUser(res.data)
     })
-    this.setState({
-      treeData: JSON.parse(localStorage.getItem('tree'))
+    this.get('getMenuList').then(res => {
+      console.log(res.data.concat(this.state.treeData),'???????///////')
+      this.setState({
+        treeData: res.data.concat(this.state.treeData)
+      },()=>{
+        console.log()
+      })
     })
+
   }
   logOut(p) {
     this.get('logOut').then(
@@ -78,11 +89,11 @@ class Admin extends Component {
                     if (treeData[item].childMenu) {
                       let child = treeData[item].childMenu
                       return (
-                        <SubMenu key={treeData[item].id} title={<span><Icon type="user" />{treeData[item].name}</span>}>
+                        <SubMenu key={treeData[item].id} title={<span><Icon type="user" />{treeData[item].menuName}</span>}>
                           {
                             Object.keys(child).map(item => {
                               return <Menu.Item key={child[item].id}>
-                                <Link to={child[item].url}>{child[item].name}</Link>
+                                <Link to={child[item].url}>{child[item].menuName}</Link>
                               </Menu.Item>
                             })
                           }
@@ -94,7 +105,7 @@ class Admin extends Component {
                       <span>
 
                         <Link to={treeData[item].url}>
-                          {treeData[item].name}
+                          {treeData[item].menuName}
                         </Link>
                       </span>
                     </Menu.Item>

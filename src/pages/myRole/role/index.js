@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { Modal, Tree, Button, Popconfirm, Table, Divider, message, Pagination } from 'antd';
+import { Modal, Tree, Button, Popconfirm, Table, Divider, message, Input } from 'antd';
 import { connect } from 'react-redux'
 import { user } from '../../../redux/actions/index'
 import { Link, withRouter } from 'react-router-dom'
 const DirectoryTree = Tree.DirectoryTree;
 const TreeNode = Tree.TreeNode;
+const Search = Input.Search;
 import './index.less'
 const roleList = [
     {
@@ -32,9 +33,9 @@ class role extends Component {
         this.state = {
             visible: false,
             roleList: [],
-            tableLoading: true,
-            current:1,
-            pageSize:10,
+            tableLoading: false,
+            current: 1,
+            pageSize: 10,
             columns: [
                 {
                     align: 'center',
@@ -78,15 +79,19 @@ class role extends Component {
         }
     }
     componentDidMount() {
-        this.getRoleList(1,10)
+        this.getRoleList(1, 10)
     }
-    getRoleList(page,pageSize){
+    getRoleList(page, pageSize,roleName) {
         let value = {}
         this.setState({ tableLoading: true })
         value.page = page
         value.size = pageSize
+        value.roleName = ''
+        if(roleName){
+            value.roleName= roleName
+        }
         this.get('getRoleList', value).then(res => {
-            this.props.setUser(res.data.rows)
+            // this.props.setUser(res.data.rows)
             this.setState({ roleList: res.data })
             this.setState({ tableLoading: false })
         })
@@ -158,6 +163,12 @@ class role extends Component {
         return (
             <div className='roleConfig'>
                 <div>
+                    <Search
+                        className='search'
+                        placeholder="请输入关键字"
+                        enterButton="查询"
+                        onSearch={value => this.getRoleList(1, 10,value)}
+                    />
                     <Button type="primary" onClick={this.showModal.bind(this)} className='creatRole'>
                         创建角色
                     </Button>
@@ -172,27 +183,24 @@ class role extends Component {
                             loading={this.state.tableLoading}
                             pagination={{
                                 total: this.state.roleList.count,
-                                showQuickJumper:true,
-                                showSizeChanger:true,
-                                defaultPageSize:10,
-                                pageSizeOptions:['5','10','20','40'],
-                                defaultCurrent:1,
-                                current:this.state.current,
+                                defaultPageSize: 10,
+                                defaultCurrent: 1,
+                                current: this.state.current,
                                 onChange: (page, pageSize) => {
-                                    console.log('current page: ', page,pageSize)
+                                    console.log('current page: ', page, pageSize)
                                     this.setState({
                                         current: page,
-                                        pageSize:pageSize
+                                        pageSize: pageSize
                                     })
-                                    this.getRoleList(page,pageSize)
+                                    this.getRoleList(page, pageSize)
                                 },
                                 onShowSizeChange: (page, pageSize) => {
-                                    console.log('current page: ', page,pageSize)
+                                    console.log('current page: ', page, pageSize)
                                     this.setState({
                                         current: page,
-                                        pageSize:pageSize
+                                        pageSize: pageSize
                                     })
-                                    this.getRoleList(page,pageSize)
+                                    this.getRoleList(page, pageSize)
                                 }
                             }}
                         >

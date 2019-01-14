@@ -6,60 +6,6 @@ const DirectoryTree = Tree.DirectoryTree;
 const TreeNode = Tree.TreeNode;
 const RadioGroup = Radio.Group;
 const { TextArea } = Input
-const treeData = {
-    '0': {
-        name: "博客系统",
-        id: '1',
-        url: "",
-        type: 1,
-        readOnly: false,
-        childMenu: {
-            '0': {
-                name: "数据",
-                id: '11',
-                url: "/admin/index",
-                type: 2,
-                readOnly: false
-            },
-            "1": {
-                name: "列表",
-                id: '12',
-                url: "/admin/list",
-                type: 2,
-                readOnly: false
-            },
-            "2": {
-                name: "分类",
-                id: '13',
-                url: "/admin/category",
-                type: 2,
-                readOnly: false
-            },
-            "3": {
-                name: "文章",
-                id: '14',
-                url: "/admin/article",
-                type: 2,
-                readOnly: false
-            }
-        }
-    },
-    '1': {
-        name: "菜单配置",
-        id: '2',
-        url: "/admin/menuConfig",
-        type: 1,
-        readOnly: true
-    },
-    '2': {
-        name: "我的菜单",
-        id: '19',
-        url: "/admin/myMenu",
-        type: 1,
-        readOnly: false
-    }
-}
-localStorage.setItem('tree', JSON.stringify(treeData))
 class roleDetail extends Component {
     constructor(props) {
         super(props)
@@ -75,7 +21,8 @@ class roleDetail extends Component {
             expandedKeys: [],
             autoExpandParent: true,
             checkedKeys: [],
-            selectedKeys: []
+            selectedKeys: [],
+            loading: true
         }
     }
 
@@ -87,6 +34,7 @@ class roleDetail extends Component {
             if (this.props.location.query) {
                 let value = { roleId: this.props.location.query.roleId }
                 this.get('getRole', value).then(res => {
+                    this.setState({loading:false})
                     this.setState({ roleInstruct: res.data.remark })
                     this.setState({ roleName: res.data.roleName })
                     let myData = []
@@ -103,6 +51,8 @@ class roleDetail extends Component {
                     });
                     console.log("wodedata", myData)
                 })
+            }else{
+                this.setState({loading:false})
             }
         })
         console.log(this.props.location, '$$$$$$$$$$')
@@ -197,13 +147,14 @@ class roleDetail extends Component {
         })
     }
     handCancel() {
-        this.props.history.push('myMenu')
+        this.props.history.push('myRole')
     }
     handSure() {
         let value = {}
         value.roleName = this.state.roleName
         value.remark = this.state.roleInstruct
         value.roleMenu = this.state.setRoleMenu
+        if(!value.roleName) return message.warning('角色名不能为空');
         console.log(value)
         if (this.props.location.query) {
             value.roleId = this.props.location.query.roleId
@@ -214,7 +165,7 @@ class roleDetail extends Component {
                     this.setState({
                         show: true
                     })
-                    this.props.history.push('myMenu')
+                    this.props.history.push('myRole')
                 }
             )
         } else {
@@ -225,7 +176,7 @@ class roleDetail extends Component {
                     this.setState({
                         show: true
                     })
-                    this.props.history.push('myMenu')
+                    this.props.history.push('myRole')
                 }
             )
         }
@@ -246,6 +197,8 @@ class roleDetail extends Component {
     }
     render() {
         return (
+            <div>
+                <Spin spinning={this.state.loading}>
             <ul className='roleMsg'>
                 <li className='li'>
                     <span className='span'>角色名称</span>
@@ -292,6 +245,8 @@ class roleDetail extends Component {
                     <Button type="primary" onClick={this.handSure.bind(this)}>确定</Button>
                 </li>
             </ul>
+            </Spin>
+            </div>
         );
     }
 }

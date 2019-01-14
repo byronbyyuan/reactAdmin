@@ -27,7 +27,9 @@ const api = {
         getMyMenuList:'/menu/getMyMenuList', // 获取我创建的菜单
         deleteMenu:'/menu/deleteMenu', // 删除我的菜单
         getCategoryList:'/book/getCategoryList', // 获取博客分类
-        deleteCategory:'/book/deleteCategory'// 删除博客分类
+        deleteCategory:'/book/deleteCategory',// 删除博客分类
+        getUserName:'/user/getUserName', // 查询其他用户信息
+        getMenuList:'/menu/getMenuList'
 }
 }
 
