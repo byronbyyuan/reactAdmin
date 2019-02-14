@@ -17,3 +17,13 @@ export const OPENCOMMENTS = 'OPENCOMMENTS'
 export const ROLELIST = 'ROLELIST'
 
 export const MENULIST = 'MENULIST'
+
+export const INSERTURL = 'INSERTURL'
+
+export const ROLEMSG = 'ROLEMSG'
+
+export const ROLESATUS = 'ROLESTATUS'
+
+export const ROLEDETATIL = 'ROLEDETATIL'
+
+export const SEARCHUSERNAME = 'SEARCHUSERNAME'

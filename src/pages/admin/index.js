@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Layout, Menu, Breadcrumb, Icon, Dropdown } from 'antd';
+import { Layout, Menu, Breadcrumb, Icon, Dropdown, message } from 'antd';
 const { SubMenu, Item } = Menu;
 const { Header, Content, Sider } = Layout;
 import { connect } from 'react-redux'
@@ -27,37 +27,53 @@ class Admin extends Component {
 
     this.state = {
       treeData: [
-        { menuName: "菜单配置", url: "/admin/menuConfig" ,id:'-1',type:2},
-        { menuName: "我的角色", url: "/admin/myRole" ,id:'-2',type:2},
-        { menuName: "用户角色", url: "/admin/userRole" ,id:'-3',type:2}
+        { menuName: "菜单配置", url: "/admin/menuConfig", id: '-1', type: 2 },
+        { menuName: "我的角色", url: "/admin/myRole", id: '-2', type: 2 },
+        { menuName: "用户角色", url: "/admin/userRole", id: '-3', type: 2 }
       ]
     }
 
   };
   componentDidMount() {
-    this.get('getUser').then(res => {
-      this.props.setUser(res.data)
-    })
-    this.get('getMenuList').then(res => {
-      console.log(res.data.concat(this.state.treeData),'???????///////')
-      this.setState({
-        treeData: res.data.concat(this.state.treeData)
-      },()=>{
-        console.log()
-      })
-    })
-
+    // this.get('getUser').then(res => {
+    //   if(res.code === 10001){
+    //     this.props.setUser(res.data)
+    //   }else{
+    //     message.error('网络连接失败，请重试')
+    //   }
+    // })
+    // this.get('getMenuList').then(res => {
+    //   if(res.code === 10001){
+    //     this.setState({
+    //       treeData: this.state.treeData.concat(res.data)
+    //     })
+    //   }else{
+    //     message.error('网络连接失败，请重试')
+    //   }
+    // })
+    console.log(this.props, '&&&&&&&')
+  }
+  handClick(value) {
+    console.log(value, this.props,'ppppppp******')
+    if (value&&value.indexOf('http') > -1) {
+      this.props.insertUrl(value)
+      this.props.history.push({ pathname: '/admin/insert/',search:'src='+value})
+    } else {
+      this.props.history.push({ pathname: value })
+    }
   }
   logOut(p) {
     this.get('logOut').then(
       res => {
-        this.props.history.push('/')
+        if (res.code === 10001) {
+          this.props.history.push('/')
+        }
       }
     )
   }
   render() {
-    let treeData = this.state.treeData
-    console.log(this.props.children)
+    let treeData = this.props.menuInfo.concat(this.state.treeData)
+    console.log(this.props, '787787889999')
     return (
       <div className='admin'>
         <Layout>
@@ -69,7 +85,7 @@ class Admin extends Component {
               </div>
               <div className='adminHead_userInfo'>
                 <div className='userInfo'>
-                  <span className='name'>{this.props.user.name}</span>
+                  <span className='name'>{this.props.userInfo.name}</span>
                   <img src={require('../../assets/image/header1.png')} alt='' />
                   <Dropdown overlay={menu(this.logOut.bind(this, this.props))} placement='bottomCenter'>
                     <a className="ant-dropdown-link" href="#">
@@ -93,7 +109,7 @@ class Admin extends Component {
                           {
                             Object.keys(child).map(item => {
                               return <Menu.Item key={child[item].id}>
-                                <Link to={child[item].url}>{child[item].menuName}</Link>
+                                <span onClick={this.handClick.bind(this, child[item].url)}>{child[item].menuName}</span>
                               </Menu.Item>
                             })
                           }
@@ -103,10 +119,9 @@ class Admin extends Component {
                     return <Menu.Item key={treeData[item].id}>
                       <Icon type="inbox" />
                       <span>
-
-                        <Link to={treeData[item].url}>
+                        <span onClick={this.handClick.bind(this, treeData[item].url)}>
                           {treeData[item].menuName}
-                        </Link>
+                        </span>
                       </span>
                     </Menu.Item>
                   })
@@ -130,12 +145,20 @@ class Admin extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  user: state.user
-})
 
-const mapDispatchToProps = {
-  ...user
+const mapState = (state, ownProps) => {
+  return {
+      userInfo: state.user.user,
+      menuInfo: state.user.menuInfo,
+      url:state.user.insertUrl
+  }
+}
+const mapDispatch = (dispatch, ownProps) => {
+  return {
+      insertUrl: data => {
+          dispatch(user.insertUrl(data))
+      }
+  }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Admin))
+export default withRouter(connect(mapState, mapDispatch)(Admin))

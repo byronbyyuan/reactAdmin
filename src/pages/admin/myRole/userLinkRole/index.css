@@ -47,7 +47,14 @@
   font-size: 20px;
   margin-right: 10px;
 }
-.userRole .deleteRole {
+.userRole .iconStyle {
+  margin-right: -15px;
+}
+.userRole .iconStyle .deleteRole {
+  cursor: pointer;
+  margin-left: 10px;
+}
+.userRole .iconStyle .detailRole {
   cursor: pointer;
 }
 .userRole .roleText {

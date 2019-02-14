@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './index.less'
-import { Form, Row, Col, Input, Button, Icon, Select, DatePicker, Radio, Table, Divider } from 'antd';
+import { Form, Row, Col, Input, Button, Icon, Select, DatePicker, Radio, Table, Divider ,message} from 'antd';
 import {user} from '../../../redux/actions/index'
 import {connect} from 'react-redux'
 import { Link ,withRouter} from 'react-router-dom'
@@ -114,7 +114,11 @@ export class AdminList extends Component {
       if(!err){
         console.log('Received values of form: ', values);
         this.get().then(res=>{
-          this.props.userData(res.data)
+          if(res.code === 10001){
+            this.props.userData(res.data)
+          }else{
+            message.error('获取数据失败，请重试')
+          }
         })
       }
     })

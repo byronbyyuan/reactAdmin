@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import './index.less'
-import { Modal, Tree, Button, Popconfirm } from 'antd';
+import { Modal, Tree, Button, Popconfirm, message } from 'antd';
 import AddFrom from './AddFrom'
 const DirectoryTree = Tree.DirectoryTree;
 const TreeNode = Tree.TreeNode;
@@ -17,15 +17,25 @@ class menuConfig extends Component {
     }
   }
   async componentDidMount() {
-    let treeData = await this.get('getMyMenuList')
-    console.log(treeData)
-    this.setState({ treeData })
+    this.get('getMyMenuList').then(res=>{
+      if(res.code === 10001){
+        this.setState({ treeData:res.data })
+      }else{
+        message.error('获取数据失败，请重试')
+      }
+    })
   }
   async addSubmit(data) {
     if (this.state.item) {
       data.parentId = this.state.item.id
     }
-    let result = await this.post('createMenu', data)
+    this.post('createMenu', data).then(res=>{
+      if(res.code === 10001){
+        let result = res.data
+      }else{
+        message.error('创建菜单失败，请重试')
+      }
+    })
 
   }
   onAdd(item, event) {

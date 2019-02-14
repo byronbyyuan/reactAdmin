@@ -29,7 +29,8 @@ const api = {
         getCategoryList:'/book/getCategoryList', // 获取博客分类
         deleteCategory:'/book/deleteCategory',// 删除博客分类
         getUserName:'/user/getUserName', // 查询其他用户信息
-        getMenuList:'/menu/getMenuList'
+        getMenuList:'/menu/getMenuList',
+        getRolePrev:'/role/getRolePrev' //获取角色菜单
 }
 }
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Tree, Button, Popconfirm, Table, Divider, message, Input } from 'antd';
 import { connect } from 'react-redux'
-import { user } from '../../../redux/actions/index'
+import { user } from '../../../../redux/actions/index'
 import { Link, withRouter } from 'react-router-dom'
 const DirectoryTree = Tree.DirectoryTree;
 const TreeNode = Tree.TreeNode;
@@ -81,19 +81,22 @@ class role extends Component {
     componentDidMount() {
         this.getRoleList(1, 10)
     }
-    getRoleList(page, pageSize,roleName) {
+    getRoleList(page, pageSize, roleName) {
         let value = {}
         this.setState({ tableLoading: true })
         value.page = page
         value.size = pageSize
         value.roleName = ''
-        if(roleName){
-            value.roleName= roleName
+        if (roleName) {
+            value.roleName = roleName
         }
         this.get('getRoleList', value).then(res => {
-            // this.props.setUser(res.data.rows)
-            this.setState({ roleList: res.data })
-            this.setState({ tableLoading: false })
+            if (res.code === 10001) {
+                this.setState({ roleList: res.data, tableLoading: false })
+            } else {
+                this.setState({ tableLoading: false })
+                message.error('获取角色列表失败，请重试')
+            }
         })
     }
     showModal() {
@@ -146,12 +149,16 @@ class role extends Component {
         this.get('deleteRole', value).then(res => {
             let value = { page: this.state.current, size: this.state.pageSize }
             this.get('getRoleList', value).then(res => {
-                this.setState({ roleList: res.data })
-                this.setState({ tableLoading: false })
-                message.success('删除角色成功');
-                this.setState({
-                    show: true
-                })
+                if (res.code === 10001) {
+                    this.setState({ roleList: res.data })
+                    this.setState({ tableLoading: false })
+                    message.success('删除角色成功');
+                    this.setState({
+                        show: true
+                    })
+                } else {
+                    message.success('删除角色失败，请重试');
+                }
             })
         })
     }
@@ -167,7 +174,7 @@ class role extends Component {
                         className='search'
                         placeholder="请输入关键字"
                         enterButton="查询"
-                        onSearch={value => this.getRoleList(1, 10,value)}
+                        onSearch={value => this.getRoleList(1, 10, value)}
                     />
                     <Button type="primary" onClick={this.showModal.bind(this)} className='creatRole'>
                         创建角色
