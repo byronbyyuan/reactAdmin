@@ -7,20 +7,24 @@ import { user } from '../../redux/actions/index'
 import { Link, withRouter } from 'react-router-dom'
 import './index.less'
 
-const menu = (logOut) => {
-  return (
-    <Menu>
-      {/* <Menu.Item>
-      <Icon type="lock" theme="outlined" />
-      <span className='setting_label'>锁屏</span>
-    </Menu.Item> */}
-      <Menu.Item onClick={logOut}>
-        <Icon type="poweroff" theme="outlined" />
-        <span className='setting_label'>注销</span>
-      </Menu.Item>
-    </Menu>
-  )
-};
+// const menu = (logOut) => {
+//   return (
+//     <Menu onClick={logOut}>
+//       {/* <Menu.Item>
+//       <Icon type="lock" theme="outlined" />
+//       <span className='setting_label'>锁屏</span>
+//     </Menu.Item> */}
+//     <Menu.Item key='1'>
+//         <Icon type="user" theme="outlined" />
+//         <span className='setting_label'>个人中心</span>
+//       </Menu.Item>
+//       <Menu.Item key ='2'>
+//         <Icon type="poweroff" theme="outlined" />
+//         <span className='setting_label'>注销</span>
+//       </Menu.Item>
+//     </Menu>
+//   )
+// };
 class Admin extends Component {
   constructor(props) {
     super(props)
@@ -35,23 +39,6 @@ class Admin extends Component {
 
   };
   componentDidMount() {
-    // this.get('getUser').then(res => {
-    //   if(res.code === 10001){
-    //     this.props.setUser(res.data)
-    //   }else{
-    //     message.error('网络连接失败，请重试')
-    //   }
-    // })
-    // this.get('getMenuList').then(res => {
-    //   if(res.code === 10001){
-    //     this.setState({
-    //       treeData: this.state.treeData.concat(res.data)
-    //     })
-    //   }else{
-    //     message.error('网络连接失败，请重试')
-    //   }
-    // })
-    console.log(this.props, '&&&&&&&')
   }
   handClick(value) {
     console.log(value, this.props,'ppppppp******')
@@ -62,16 +49,42 @@ class Admin extends Component {
       this.props.history.push({ pathname: value })
     }
   }
-  logOut(p) {
-    this.get('logOut').then(
-      res => {
-        if (res.code === 10001) {
-          this.props.history.push('/')
+  logOut(e) {
+    console.log(e,'tttttttttt')
+    if(e.key==='1'){
+      this.props.history.push('userInfo')
+    }
+    if(e.key==='2'){
+      this.get('logOut').then(
+        res => {
+          if (res.code &&res.code === 10001) {
+            this.props.history.push('/')
+          }
         }
-      }
-    )
+      )
+    }
+  }
+  goToUserInfo(){
+    this.props.history.push('userInfo')
   }
   render() {
+    const menu = (
+        <Menu onClick={this.logOut.bind(this)}>
+          {/* <Menu.Item>
+          <Icon type="lock" theme="outlined" />
+          <span className='setting_label'>锁屏</span>
+        </Menu.Item> */}
+        <Menu.Item key='1'>
+            <Icon type="user" theme="outlined" />
+            <span className='setting_label'>个人中心</span>
+          </Menu.Item>
+          <Menu.Item key ='2'>
+            <Icon type="poweroff" theme="outlined" />
+            <span className='setting_label'>注销</span>
+          </Menu.Item>
+        </Menu>
+      )
+
     let treeData = this.props.menuInfo.concat(this.state.treeData)
     console.log(this.props, '787787889999')
     return (
@@ -86,10 +99,10 @@ class Admin extends Component {
               <div className='adminHead_userInfo'>
                 <div className='userInfo'>
                   <span className='name'>{this.props.userInfo.name}</span>
-                  <img src={require('../../assets/image/header1.png')} alt='' />
-                  <Dropdown overlay={menu(this.logOut.bind(this, this.props))} placement='bottomCenter'>
+                  
+                  <Dropdown overlay={menu} placement='bottomCenter'>
                     <a className="ant-dropdown-link" href="#">
-                      <Icon type="setting" theme="outlined" />
+                        <img src={require('../../assets/image/header1.png')} alt='' />
                     </a>
                   </Dropdown>
                 </div>

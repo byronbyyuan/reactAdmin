@@ -23,7 +23,7 @@ class NormalLoginForm extends React.Component {
   componentDidMount() {
     this.get('getUser').then(res => {
       console.log(res)
-      if (res.code === 10001) {
+      if (res&&res.code &&res.code=== 10001) {
         this.props.history.push('admin/index')
         this.props.setUser(res.data)
       }
@@ -70,13 +70,13 @@ class NormalLoginForm extends React.Component {
         if (this.state.show) {
           this.post('signUp', values).then(res => {
             this.setState({loginLoading:false})
-            if (res.code === 10001) {
+            if (res.code &&res.code === 10001) {
               this.props.history.push('admin/index')
             }
           })
         } else {
           this.post('signIn', values).then(res => {
-            if (res.code === 10001) {
+            if (res.code &&res.code === 10001) {
               message.success('注册成功');
               this.setState({
                 show: true

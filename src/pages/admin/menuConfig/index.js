@@ -8,7 +8,6 @@ const TreeNode = Tree.TreeNode;
 class menuConfig extends Component {
   constructor(props) {
     super(props)
-
     this.state = {
       treeData: [],
       visible: false,
@@ -18,7 +17,7 @@ class menuConfig extends Component {
   }
   async componentDidMount() {
     this.get('getMyMenuList').then(res=>{
-      if(res.code === 10001){
+      if(res.code &&res.code === 10001){
         this.setState({ treeData:res.data })
       }else{
         message.error('获取数据失败，请重试')

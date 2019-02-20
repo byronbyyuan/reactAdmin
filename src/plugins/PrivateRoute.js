@@ -7,8 +7,16 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 
 import { user } from '../redux/actions'
-import {Spin} from 'antd'
+import { Spin } from 'antd'
 import './noAuth.less'
+const menuList = [
+    '/admin/index',
+    '/admin/menuConfig',
+    '/admin/myRole',
+    '/admin/userRole',
+    '/admin/roleMsg',
+    '/admin/userInfo'
+]
 class PrivateRoute extends Component {
     constructor(props, context) {
         super(props, context);
@@ -22,7 +30,7 @@ class PrivateRoute extends Component {
         if (userinfo.data) {
             this.props.setUser(userinfo.data)
             let menulist = await this.get('getMenuList')
-            if(!menulist.data){
+            if (!menulist.data) {
                 this.redirect()
                 return
             }
@@ -30,29 +38,34 @@ class PrivateRoute extends Component {
             console.log(menulist, history, '9999999jjjjj', this.props)
             let data = JSON.stringify(menulist)
             let url = this.props.history.location.pathname
-            if(url === '/admin/insert/'){
+            if (url === '/admin/insert/') {
                 url = this.props.history.location.search.split('=')[1]
             }
-            let isExist = this.menuExist(data,url)
-            if(url === '/admin/index'||
-            url === '/admin/menuConfig'||
-            url === '/admin/myRole'||
-            url === '/admin/userRole'||
-            url === '/admin/roleMsg'
-            ){
-                isExist = true
-            }
-            if(isExist){
-                this.setState({isAuthenticated:true})
-            }else{
+            let isExist = this.menuExist(data, url)
+            // if (url === '/admin/index' ||
+            //     url === '/admin/menuConfig' ||
+            //     url === '/admin/myRole' ||
+            //     url === '/admin/userRole' ||
+            //     url === '/admin/roleMsg'
+            // ) {
+            //     isExist = true
+            // }
+            menuList.map(res=>{
+                if(res===url){
+                    isExist = true
+                }
+            })
+            if (isExist) {
+                this.setState({ isAuthenticated: true })
+            } else {
                 this.redirect()
-            }         
+            }
             // console.log(data, data.length, url, 'ttttttttt', isExist)
-        }     
+        }
     }
     menuExist(data, url) {
         let i = 0
-        if(url[0]!=='/'&&url.indexOf('http')===-1){
+        if (url[0] !== '/' && url.indexOf('http') === -1) {
             return false
         }
         while (i < data.length) {
@@ -61,7 +74,7 @@ class PrivateRoute extends Component {
                 return false
             } else {
                 if ((data[i - 1] === '"' && data[i + url.length] === '"') ||
-                    (data[i + url.length] === '/' && data[i + url.length + 1 ]==='"'&& data[i - 1] === '"')) {
+                    (data[i + url.length] === '/' && data[i + url.length + 1] === '"' && data[i - 1] === '"')) {
                     return true
                 }
                 i++
@@ -110,7 +123,7 @@ const mapDispatch = (dispatch, ownProps) => {
         DelUser: () => {
             dispatch(user.delUser())
         },
-        userMenu:(data)=>{
+        userMenu: (data) => {
             dispatch(user.userMenu(data))
         }
     }

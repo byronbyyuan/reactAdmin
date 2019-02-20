@@ -18,6 +18,7 @@ import userRole from './pages/admin/myRole/userLinkRole'
 import errorPage from './pages/admin/404'
 import insert from './pages/admin/insert'
 import roleMsg from './pages/admin/myRole/roleMsg'
+import userInfo from './pages/admin/userInfo/index.js'
 
 import Admin from './pages/admin'
 import {Provider} from 'react-redux'
@@ -30,9 +31,6 @@ Component.prototype.get = get
 Component.prototype.Util = Util
 
 const AdminComponent = ({ match }) => {
-
-
-    console.log(match,'///////////////////////////ssssss000000')
     return (
         <Admin>
             <Route path={match.path + "/index"} exact component={Index}></Route>
@@ -45,6 +43,7 @@ const AdminComponent = ({ match }) => {
             <Route path={match.path + '/UserRole'} component={userRole}></Route>
             <Route path={match.path + '/insert/'} component={insert}></Route>
             <Route path={match.path + '/roleMsg/'} component={roleMsg}></Route>
+            <Route path={match.path + '/userInfo/'} component={userInfo}></Route>
         </Admin>
     )
 }
