@@ -138,7 +138,7 @@ export class AdminList extends Component {
   }  
   to(id){
     this.props.history.push({
-      pathname: '/admin/article/'+id,
+      pathname: '/admin/book/article/'+id,
       query:{
         id
       }

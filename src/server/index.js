@@ -37,7 +37,10 @@ const api = {
         deleteMenu:'/menu/deleteMenu',
         getCommentsList:'/book/getCommentsList', // 获取评论列表
         deleteComments:'/book/deleteComments', // 删除评论
-    }
+        getUserName:'/user/getUserName', // 查询其他用户信息
+        getMenuList:'/menu/getMenuList',
+        getRolePrev:'/role/getRolePrev' //获取角色菜单
+}
 }
 
 export const post = (name,data)=>{

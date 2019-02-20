@@ -57,7 +57,7 @@ axios.interceptors.response.use(response => {
     if (result.code === Success) { //正确请求      
         return result
     }else if(result.code === notAuth){
-       // if(location.pathname !== '/') window.location.href = '/'
+       if(location.pathname !== '/') window.location.href = '/'
     }else{
         errAlert(result.message);        
         return result

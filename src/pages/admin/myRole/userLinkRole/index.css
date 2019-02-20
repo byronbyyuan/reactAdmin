@@ -1,0 +1,77 @@
+.userRole {
+  overflow: hidden;
+}
+.userRole .userSearch {
+  width: 40%;
+  margin-bottom: 20px;
+  position: relative;
+}
+.userRole .userMsg {
+  clear: both;
+  float: left;
+}
+.userRole .userMsg .userName {
+  margin-top: 10px;
+}
+.userRole .roleDetail {
+  float: left;
+  width: 100%;
+  overflow: hidden;
+}
+.userRole .card {
+  width: 30%;
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+.userRole .addUser {
+  float: left;
+  width: 30%;
+  height: 174px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  border: 1px dotted #eaecf1;
+  position: relative;
+}
+.userRole .addUser .addRole {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  line-height: 24px;
+  width: 80px;
+  text-align: center;
+  margin: -12px 0 0 -40px;
+  cursor: pointer;
+}
+.userRole .addUser .addRole span {
+  font-size: 20px;
+  margin-right: 10px;
+}
+.userRole .iconStyle {
+  margin-right: -15px;
+}
+.userRole .iconStyle .deleteRole {
+  cursor: pointer;
+  margin-left: 10px;
+}
+.userRole .iconStyle .detailRole {
+  cursor: pointer;
+}
+.userRole .roleText {
+  position: relative;
+  padding-left: 14px;
+}
+.userRole .roleText:before {
+  content: '';
+  width: 4px;
+  height: 12px;
+  position: absolute;
+  background-color: #1890ff;
+  top: 0;
+  left: 0;
+  top: 5px;
+}
+.roleSearch {
+  margin-bottom: 20px;
+  width: 60%;
+}

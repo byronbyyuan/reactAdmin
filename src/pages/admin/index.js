@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Layout, Menu, Breadcrumb, Icon, Dropdown } from 'antd';
+import { Layout, Menu, Breadcrumb, Icon, Dropdown, message } from 'antd';
 const { SubMenu, Item } = Menu;
 const { Header, Content, Sider } = Layout;
 import { connect } from 'react-redux'
@@ -7,45 +7,86 @@ import { user } from '../../redux/actions/index'
 import { Link, withRouter } from 'react-router-dom'
 import './index.less'
 
-const menu = (logOut) => {
-  return (
-    <Menu>
-      {/* <Menu.Item>
-      <Icon type="lock" theme="outlined" />
-      <span className='setting_label'>锁屏</span>
-    </Menu.Item> */}
-      <Menu.Item onClick={logOut}>
-        <Icon type="poweroff" theme="outlined" />
-        <span className='setting_label'>注销</span>
-      </Menu.Item>
-    </Menu>
-  )
-};
+// const menu = (logOut) => {
+//   return (
+//     <Menu onClick={logOut}>
+//       {/* <Menu.Item>
+//       <Icon type="lock" theme="outlined" />
+//       <span className='setting_label'>锁屏</span>
+//     </Menu.Item> */}
+//     <Menu.Item key='1'>
+//         <Icon type="user" theme="outlined" />
+//         <span className='setting_label'>个人中心</span>
+//       </Menu.Item>
+//       <Menu.Item key ='2'>
+//         <Icon type="poweroff" theme="outlined" />
+//         <span className='setting_label'>注销</span>
+//       </Menu.Item>
+//     </Menu>
+//   )
+// };
 class Admin extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      treeData: ''
+      treeData: [
+        { menuName: "菜单配置", url: "/admin/menuConfig", id: '-1', type: 2 },
+        { menuName: "我的角色", url: "/admin/myRole", id: '-2', type: 2 },
+        { menuName: "用户角色", url: "/admin/userRole", id: '-3', type: 2 }
+      ]
     }
+
   };
   componentDidMount() {
-    this.get('getUser').then(res => {
-      this.props.setUser(res.data)
-    })
-    this.setState({
-      treeData: JSON.parse(localStorage.getItem('tree'))
-    })
   }
-  logOut(p) {
-    this.get('logOut').then(
-      res => {
-        this.props.history.push('/')
-      }
-    )
+  handClick(value) {
+    console.log(value, this.props,'ppppppp******')
+    if (value&&value.indexOf('http') > -1) {
+      this.props.insertUrl(value)
+      this.props.history.push({ pathname: '/admin/insert/',search:'src='+value})
+    } else {
+      this.props.history.push({ pathname: value })
+    }
+  }
+  logOut(e) {
+    console.log(e,'tttttttttt')
+    if(e.key==='1'){
+      this.props.history.push('userInfo')
+    }
+    if(e.key==='2'){
+      this.get('logOut').then(
+        res => {
+          if (res.code &&res.code === 10001) {
+            this.props.history.push('/')
+          }
+        }
+      )
+    }
+  }
+  goToUserInfo(){
+    this.props.history.push('userInfo')
   }
   render() {
-    let treeData = this.state.treeData
+    const menu = (
+        <Menu onClick={this.logOut.bind(this)}>
+          {/* <Menu.Item>
+          <Icon type="lock" theme="outlined" />
+          <span className='setting_label'>锁屏</span>
+        </Menu.Item> */}
+        <Menu.Item key='1'>
+            <Icon type="user" theme="outlined" />
+            <span className='setting_label'>个人中心</span>
+          </Menu.Item>
+          <Menu.Item key ='2'>
+            <Icon type="poweroff" theme="outlined" />
+            <span className='setting_label'>注销</span>
+          </Menu.Item>
+        </Menu>
+      )
+
+    let treeData = this.props.menuInfo.concat(this.state.treeData)
+    console.log(this.props, '787787889999')
     return (
       <div className='admin'>
         <Layout>
@@ -57,11 +98,11 @@ class Admin extends Component {
               </div>
               <div className='adminHead_userInfo'>
                 <div className='userInfo'>
-                  <span className='name'>{this.props.user.name}</span>
-                  <img src={require('../../assets/image/header1.png')} alt='' />
-                  <Dropdown overlay={menu(this.logOut.bind(this, this.props))} placement='bottomCenter'>
+                  <span className='name'>{this.props.userInfo.name}</span>
+                  
+                  <Dropdown overlay={menu} placement='bottomCenter'>
                     <a className="ant-dropdown-link" href="#">
-                      <Icon type="setting" theme="outlined" />
+                        <img src={require('../../assets/image/header1.png')} alt='' />
                     </a>
                   </Dropdown>
                 </div>
@@ -77,11 +118,11 @@ class Admin extends Component {
                     if (treeData[item].childMenu) {
                       let child = treeData[item].childMenu
                       return (
-                        <SubMenu key={treeData[item].id} title={<span><Icon type="user" />{treeData[item].name}</span>}>
+                        <SubMenu key={treeData[item].id} title={<span><Icon type="user" />{treeData[item].menuName}</span>}>
                           {
                             Object.keys(child).map(item => {
                               return <Menu.Item key={child[item].id}>
-                                <Link to={child[item].url}>{child[item].name}</Link>
+                                <span onClick={this.handClick.bind(this, child[item].url)}>{child[item].menuName}</span>
                               </Menu.Item>
                             })
                           }
@@ -91,10 +132,9 @@ class Admin extends Component {
                     return <Menu.Item key={treeData[item].id}>
                       <Icon type="inbox" />
                       <span>
-
-                        <Link to={treeData[item].url}>
-                          {treeData[item].name}
-                        </Link>
+                        <span onClick={this.handClick.bind(this, treeData[item].url)}>
+                          {treeData[item].menuName}
+                        </span>
                       </span>
                     </Menu.Item>
                   })
@@ -118,12 +158,20 @@ class Admin extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  user: state.user
-})
 
-const mapDispatchToProps = {
-  ...user
+const mapState = (state, ownProps) => {
+  return {
+      userInfo: state.user.user,
+      menuInfo: state.user.menuInfo,
+      url:state.user.insertUrl
+  }
+}
+const mapDispatch = (dispatch, ownProps) => {
+  return {
+      insertUrl: data => {
+          dispatch(user.insertUrl(data))
+      }
+  }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Admin))
+export default withRouter(connect(mapState, mapDispatch)(Admin))

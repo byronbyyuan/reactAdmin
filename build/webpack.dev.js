@@ -45,17 +45,17 @@ module.exports = {
             template: 'index.html',
             inject: true
         }),
-        new CopyWebpackPlugin([{
-            from: path.join(__dirname, '../src/gloab', 'platelet-tips.json'),
-            to: path.join(__dirname, '../dist/assets/'),
-            cache: true
-        },
+        // new CopyWebpackPlugin([{
+        //     from: path.join(__dirname, '../src/gloab', 'platelet-tips.json'),
+        //     to: path.join(__dirname, '../dist/assets/'),
+        //     cache: true
+        // },
         // {
         //     from: path.join(__dirname, './dll', '/img'),
         //     to: path.join(__dirname, '../dist/img'),
         //     cache: true
         // }
-        ]),
+        // ]),
         //dll映射     
         new webpack.DllReferencePlugin({
             context: __dirname,
