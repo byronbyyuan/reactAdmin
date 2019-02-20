@@ -28,9 +28,7 @@ function beforeUpload(file) {
     }
     return isJPG && isLt2M;
 }
-function handleChange(value) {
-    console.log(`selected ${value}`);
-}
+
 class userInfo extends Component {
     constructor(props) {
         super(props)
@@ -39,32 +37,63 @@ class userInfo extends Component {
             previewImage: '',
             value: 1,
             loading: false,
-            imageUrl: ''
+            imageUrl: '',
+            time: {
+                year: 1999,
+                month: 1,
+                day: 1
+            }
         }
     }
     componentDidMount() {
+        this.get('getUser').then(res => {
+            console.log(res)
+            if (res&&res.code &&res.code=== 10001) {
+              this.props.setUser(res.data)
+              let array = res.data.birthday.split('-')
+              alert(array)
+              this.setState(state=>{
+                state.value=res.data.sex
+                state.time.year = array[0]||1999
+                state.time.month = array[1]||1
+                state.time.day = array[2]||1
+                return state
+              })
+            }
+          })
         console.log("ttttttt", this.props.userInfo)
     }
     handleChange(info) {
-        console.log(info, "vvvvvvvv")
-        // Get this url from response in real world.
         getBase64(info.file.originFileObj, imageUrl => this.setState({
             imageUrl,
             loading: false
         }));
     }
     onChange(e) {
-        console.log('radio checked', e.target.value);
+        console.log('radio checked', e.target.value,);
         this.setState({
             value: e.target.value
         });
     }
     handleSubmit(e) {
-        console.log('dddd')
+        console.log('dddd',this.state)
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             console.log('Received values of form: ', values, err);
+            let time = this.state.time
+            values.birthday = time.year+'-'+time.month+'-'+time.day
+            values.sex = this.state.value
+            this.post('updateUser',values).then(res=>{
+                console.log(res,'mmmmmmmmmm')
+            })
         });
+    }
+    handChange(value, event) {
+        console.log(`selected ${value} ${event}`);
+        this.setState((state)=>{
+            console.log(state,'zzzzzzz')
+            return state.time[value] = event
+        })
     }
     render() {
         const uploadButton = (
@@ -74,20 +103,31 @@ class userInfo extends Component {
             </div>
         );
         const date = new Date()
-        
+
         const dateArray = []
         const monthArray = []
         const dayArray = []
-        for(let i= date.getFullYear();i>date.getFullYear()-90;i--){
+        for (let i = date.getFullYear(); i > date.getFullYear() - 90; i--) {
             dateArray.push(i)
         }
-        let YearArray = dateArray.map(year=>{
+        for (let n = 1; n < 13; n++) {
+            monthArray.push(n)
+        }
+        for (let m = 1; m < 32; m++) {
+            dayArray.push(m)
+        }
+        let YearArray = dateArray.map(year => {
             return <Option value={year} key={year}>{year}</Option>
         })
-        console.log(date.getFullYear(),date.getMonth(),date.getDate(),'bbbb',dateArray,YearArray)
+        let optMonth = monthArray.map(year => {
+            return <Option value={year} key={year}>{year}</Option>
+        })
+        let optday = dayArray.map(year => {
+            return <Option value={year} key={year}>{year}</Option>
+        })
         const imageUrl = this.state.imageUrl;
         const name = this.props.userInfo.name || ''
-        const otherName = this.props.userInfo.otherName || ''
+        const otherName = this.props.userInfo.nickName || ''
         const age = this.props.userInfo.age || ''
         const email = this.props.userInfo.email || ''
         const phone = this.props.userInfo.phone || ''
@@ -131,7 +171,7 @@ class userInfo extends Component {
                     )}
                 </Form.Item>
                 <Form.Item label="昵称" {...formItemLayout}>
-                    {getFieldDecorator('otherName', {
+                    {getFieldDecorator('nickName', {
                         initialValue: otherName,
                         rules: [{
                             type: 'string', message: ''
@@ -150,8 +190,14 @@ class userInfo extends Component {
                     </RadioGroup>
                 </Form.Item>
                 <Form.Item label="生日" {...formItemLayout}>
-                    <Select defaultValue="2000" style={{ width: 120 }} onChange={handleChange}>
+                    <Select value={this.state.time.year} style={{ width: '36%' }} onChange={this.handChange.bind(this, 'year')}>
                         {YearArray}
+                    </Select>
+                    <Select value={this.state.time.month} style={{ width: '32%' }} onChange={this.handChange.bind(this, 'month')}>
+                        {optMonth}
+                    </Select>
+                    <Select value={this.state.time.day} style={{ width: '32%' }} onChange={this.handChange.bind(this, 'day')}>
+                        {optday}
                     </Select>
                 </Form.Item>
                 <Form.Item label="邮箱" {...formItemLayout}>
@@ -191,15 +237,13 @@ class userInfo extends Component {
 const WrapForm = Form.create()(userInfo)
 const mapState = (state, ownProps) => {
     return {
-        userInfo: state.user.user,
-        menuInfo: state.user.menuInfo,
-        url: state.user.insertUrl
+        userInfo: state.user.user
     }
 }
 const mapDispatch = (dispatch, ownProps) => {
     return {
-        insertUrl: data => {
-            dispatch(user.insertUrl(data))
+        setUser: data => {
+            dispatch(user.setUser(data))
         }
     }
 }

@@ -13,7 +13,8 @@ const api = {
         createMenu:'/menu/createMenu', // 创建菜单
         updateMenu:'/menu/updateMenu', // 更新菜单
         createCategory:'/book/createCategory',  // 创建博客分类
-        updateCategory:'/book/updateCategory' // 创建博客分类
+        updateCategory:'/book/updateCategory', // 创建博客分类
+        updateUser:'/user/updateUser'
     },
     get:{
         getRoleList:'/role/getRoleList', //获取角色列表
