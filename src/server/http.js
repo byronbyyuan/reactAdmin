@@ -58,9 +58,11 @@ axios.interceptors.response.use(response => {
         return result
     }else if(result.code === notAuth){
        // if(location.pathname !== '/') window.location.href = '/'
+    }else{
+        errAlert(result.message);        
+        return result
     }
-    errAlert(result.message);        
-    return new Promise(() => {});
+    // return new Promise(() => {});
 }, error => {
     let showError;
     if (error && error.response) { //浏览器错误
@@ -73,7 +75,12 @@ axios.interceptors.response.use(response => {
         error && error.messgae ? '' : error.messgae = '请求错误,请刷新重试!' //无response的error对象容错处理
     }
     showError ? errAlert(error.message) : '';
-    return new Promise(() => {});
+    return {
+        code:10004,
+        message:"请求错误,请刷新重试!",
+        data:null
+    }
+    // return new Promise(() => {});
 })
 
 

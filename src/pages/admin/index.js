@@ -46,7 +46,6 @@ class Admin extends Component {
   }
   render() {
     let treeData = this.state.treeData
-    console.log(this.props.children)
     return (
       <div className='admin'>
         <Layout>
@@ -70,7 +69,7 @@ class Admin extends Component {
             </div>
           </Header>
           <Layout>
-            <Sider width={200} style={{ background: '#fff' }}>
+            <Sider width={150} style={{ background: '#fff' }}>
               <Menu mode="inline" style={{ height: '100%', borderRight: 0 }}
               >
                 {

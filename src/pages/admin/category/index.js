@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import './index.less'
-import {  Button, Table, Modal, Popconfirm, Divider, Input,Radio,Form,Upload,Icon,message} from 'antd';
+import {  Button, Table, Modal, Divider, Input,Radio,Form,Upload,Icon,message} from 'antd';
 const qiniu = require('qiniu-js')
 const RadioGroup = Radio.Group;
 const confirm = Modal.confirm;
+const Search = Input.Search;
 const formItemLayout = {
   labelCol: {
     xs: { span: 5 },
@@ -41,6 +42,12 @@ export class Category extends Component {
           render:(text,record)=>{
             return this.Util.getNowFormatDate(text)
           }
+        },
+        {
+          align: 'center',
+          title: '文章数量',
+          dataIndex: 'articleNum',
+          sorter: (a, b) => a.articleNum - b.articleNum
         },{
           align: 'center',
           title: '分类图标',
@@ -53,6 +60,7 @@ export class Category extends Component {
         }, {
           align: 'center',
           title: '操作',
+          dataIndex: 'tags',          
           render: (text, record) => (
             <span>
               <a href="javascript:;" onClick={this.showModal.bind(this, false,record)}>编辑</a>
@@ -64,8 +72,8 @@ export class Category extends Component {
       ],
       data: [], // 表格数据
       pagination: {
-        total: 30,
-        pageSize: 15,
+        total: 0,
+        pageSize: 10,
         hideOnSinglePage: true,
         current: 1
       },
@@ -74,11 +82,10 @@ export class Category extends Component {
   componentDidMount(){
     this.getList()
   }
-  async getList(){
+  async getList(name=''){
     this.setState({listLoading:true})
-    let list = await this.get('getCategoryList',{page:1,size:10})
-    this.setState({listLoading:false,data:list.rows,pagination:{...this.state.pagination,total:list.count}})
-    console.log(this.state)
+    let list = await this.get('getCategoryList',{page:this.state.pagination.current,size:this.state.pagination.pageSize,name})
+    this.setState({listLoading:false,data:list.data.rows,pagination:{...this.state.pagination,total:list.data.count}})
   }
   deleteCallback(item){
     let _self = this
@@ -121,9 +128,13 @@ export class Category extends Component {
     }
     this.setState({addLoading:true})
     let res = await this.post(url,body)
-    message.success(msg + '成功')
-    this.hideModal()
-    this.getList()
+    if(res.code == 10001){
+      message.success(msg + '成功')
+      this.hideModal()
+      this.getList()
+    }else{
+      this.setState({addLoading:false})
+    }
   }
   showModal(isAdd,item){
     this.setState({
@@ -145,7 +156,9 @@ export class Category extends Component {
     });
   }
   handelChange(pagination, filters, sorter) {
-    console.log('saddddddddddd')
+    if(pagination.current != this.state.pagination.current){
+      this.setState({pagination:pagination},this.getList)
+    }
   }
   typeCheckChange(e){
     this.setState({typeCheck:e.target.value})
@@ -166,8 +179,8 @@ export class Category extends Component {
   }
   async upload(info){
     let _self = this
-    let token = await  this.get('getQiniuToken')
-    var observable = qiniu.upload(info.file, 'icon/' + new Date().getTime()+"_"+info.file.name, token,{},{
+    let tokenDate = await this.get('getQiniuToken')
+    var observable = qiniu.upload(info.file, 'icon/' + new Date().getTime()+"_"+info.file.name, tokenDate.data,{},{
       useCdnDomain: true,
     })
     var subscription = observable.subscribe({
@@ -176,6 +189,7 @@ export class Category extends Component {
         console.log('next',res)
       },
       error(err){
+        console.log(err)
         message.error('上传失败，请重新上传')
       }, 
       complete(res){
@@ -189,14 +203,26 @@ export class Category extends Component {
     })
   }
   render() {
-    let { category, name, time, state, type } = this.state
     return (
       <div className='Admin'>
-        <div className='addBtn' style={{'textAlign':"right"}}>
-          <Button type="primary" onClick={this.showModal.bind(this,true)}>新增分类</Button>
+        <div className='he'>
+          <div className='seace'>
+            <Search
+              placeholder="请输入关键字"
+              enterButton="查询"
+              size="default"
+              onSearch={this.getList.bind(this)}
+            />          
+          </div>
+          <div className='addBtn' style={{'textAlign':"right"}}>
+            <Button type="primary" onClick={this.showModal.bind(this,true)}>新增分类</Button>
+          </div>
         </div>
         <div className='Admin_table'>
-          <Table loading={this.state.listLoading} columns={this.state.columns} dataSource={this.state.data} bordered  onChange={this.handelChange.bind(this)} pagination={this.state.pagination} />
+          <Table rowKey='id' loading={{
+            tip:"数据加载中，请稍后",
+            spinning:this.state.listLoading            
+          }} columns={this.state.columns} dataSource={this.state.data} bordered  onChange={this.handelChange.bind(this)} pagination={this.state.pagination} />
         </div>
         <Modal
             title={this.state.isAdd ? '编辑' : '新增'}

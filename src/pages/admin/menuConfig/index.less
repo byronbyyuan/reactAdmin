@@ -1,12 +1,19 @@
 .menuConfigItem{
     display: inline-block;
-    width: 330px;
+    width: 350px;
+    &:hover{
+      .action{
+        display: inline-block;
+      }
+    }
     span {
       padding: 10px;
+      font-size: 12px;
     }
     .action{
       float: right;
       color: @mainColor;
+      display: none;
     }
     .actionType{
       margin-right: -19px;
@@ -19,7 +26,26 @@
   }
   .menuConfig{
     width: 70%;
+    position: relative;
+    min-height: 480px;    
   }
   .menuTree{
     width: 40%;
+    position: relative;
+  }
+  .ant-form-item{
+    display: flex;
+  }
+  .skin{
+    min-height: 480px;
+  }
+  .ant-tree-title{
+    line-height: 24px;
+  }
+  .tips{
+    position: absolute;
+    width: 300px;
+    top: 25px;
+    left: -10px;
+    opacity: 0.6;
   }
