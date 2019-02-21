@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 
 import './index.less'
-import { Modal, Tree, Button, Popconfirm, message } from 'antd';
+import { Modal, Tree, Button, Icon,Spin } from 'antd';
 import AddFrom from './AddFrom'
+const confirm = Modal.confirm;
+
 const DirectoryTree = Tree.DirectoryTree;
 const TreeNode = Tree.TreeNode;
 class menuConfig extends Component {
@@ -12,68 +14,114 @@ class menuConfig extends Component {
       treeData: [],
       visible: false,
       title: '添加',
-      item: ""
+      item: "",
+      loading:false,
+      addLoading:false,
     }
   }
-  async componentDidMount() {
-    this.get('getMyMenuList').then(res=>{
-      if(res.code &&res.code === 10001){
-        this.setState({ treeData:res.data })
-      }else{
-        message.error('获取数据失败，请重试')
-      }
-    })
+   componentDidMount() { //初始化
+      this.getMyMenuList()
   }
-  async addSubmit(data) {
-    if (this.state.item) {
-      data.parentId = this.state.item.id
-    }
-    this.post('createMenu', data).then(res=>{
-      if(res.code === 10001){
-        let result = res.data
-      }else{
-        message.error('创建菜单失败，请重试')
-      }
+  async getMyMenuList(){ //获取list
+    this.setState({
+      loading:true
     })
+    let treeDataList = await this.get('getMyMenuList')
+    let result = [
+      {
+        parentId:null,
+        id:0,
+        menuName:'后台管理',
+        type:1,
+        readOnly:true,
+        childMenu:treeDataList.data
+      }
+    ]
+    this.setState({
+      treeData : result,
+      loading:false
+    })
+    return treeDataList
+  }
 
-  }
   onAdd(item, event) {
-    console.log('add', item)
     event.stopPropagation();
     this.showModal('添加', item)
     return false
   }
-  onDelete(item, event) {
-    console.log('onDelete', item)
+  onEdit(item, event) {
     event.stopPropagation();
+    this.showModal('编辑', item)
+    // return false
+  }
+  async onDelete(item, event) { //删除
+    event.stopPropagation();
+    let _self = this
+    confirm({
+      title: '确定删除该数据吗?',
+      okText:"确认",
+      cancelText:'取消',
+      onOk() {
+        return new Promise(async (resolve, reject) => {
+          await _self.get('deleteMenu',{id:item.id})
+          _self.getMyMenuList()
+          resolve()
+        }).catch(() => console.log('Oops errors!'));
+      },
+      onCancel() {},
+    });
     return false
   }
   setFormChild(child) {
     this.child = child
   }
   valid(data) {
-    console.log(data)
     if (data) {
-      this.onHide()
+      this.setState({addLoading:true})
       this.state.title == '添加' ? this.addSubmit(data) : this.editSubmit(data)
     }
   }
   handleOk() {
     this.child.handleSubmit()
   }
-  editSubmit(data) {
-    console.log(data)
+  async editSubmit(data) { //编辑发请求
+    if(data.type == 1)data.url=''
+    let result = await this.post('updateMenu', data)
+    if(result.code == 10001){
+      this.setState({addLoading:false})
+      this.onHide()
+      this.getMyMenuList()
+    }
   }
-  onEdit(item, event) {
-    this.showModal('编辑', item)
-    event.stopPropagation();
+  async addSubmit(data) { //添加目录
+    if (this.state.item) {
+      data.parentId = this.state.item.id
+    }
+    let result = await this.post('createMenu', data)
+    if(result.code == 10001){
+      this.setState({addLoading:false})
+      this.onHide()
+      this.getMyMenuList()
+    }
+  }
+  setVisible(){
+    console.log(this)
+    // this.setState({visible:true})
   }
   showModal(title, item) {
+    // this.setState({visible:true})
     this.setState({
-      visible: true,
       title: title,
-      item: item
+      item: item,
+      visible:true
     })
+    let result = item
+    if(title=="添加"){
+      result = {
+        type:1, menuName:'', readOnly:false, url:'',show:true
+      }
+    }
+    this.child && this.child.setState({...result})
   }
   onHide() {
     this.setState({
@@ -81,20 +129,35 @@ class menuConfig extends Component {
     })
     this.child.props.form.resetFields()
   }
+  onDragEnter(){//dragenter  触发时调用
+
+  }
+  async onDrop(info){ //drop 触发时调用
+        // debugger
+        const dropKey = info.node.props.eventKey; //目标元素
+        const dragKey = info.dragNode.props.eventKey; //拖动的元素
+        let dataquery = {
+            id:dragKey,
+            parentId:dropKey
+        }
+      this.setState({
+        loading:true
+      })
+      let newList  = await this.post('moveMenu',dataquery)
+      this.getMyMenuList()
+  }
   renderTreeNodes(data) {
     const items = item => {
       return (
         <div className='menuConfigItem'>
-          <span>{item.menuName}</span>
+          <span style={{lineHeight:'24px'}}>{item.menuName}</span>
           <p className={['action', item.type == 1 && 'actionType'].join(' ')}>
             <span onClick={this.onEdit.bind(this, item)}>编辑</span>
             {
               item.type == 1 ?
                 <span onClick={this.onAdd.bind(this, item)}>添加</span>
                 : item.childMenu ? '' :
-                  <Popconfirm title="确定删除吗?" onConfirm={this.onDelete.bind(this, item)} okText="确定" cancelText="取消">
-                    <span onClick={this.onDelete.bind(this, item)}>删除</span>
-                  </Popconfirm>
+                <span onClick={this.onDelete.bind(this, item)}>删除</span>
             }
           </p>
         </div>
@@ -105,33 +168,43 @@ class menuConfig extends Component {
       let titleNode = item.readOnly ? item.menuName : items(item);
       if (item.childMenu) {
         return (
-          <TreeNode title={titleNode} isLeaf={item.type == 2} dataRef={item} key={item.id}>
+          <TreeNode title={titleNode} icon={<Icon type={item.type == 2 ? "link":'folder-open'} />} dataRef={item} key={item.id}>
             {this.renderTreeNodes(item.childMenu)}
           </TreeNode>
         );
       }
-      return <TreeNode title={titleNode} isLeaf={item.type == 2} key={item.id} />;
+      return <TreeNode title={titleNode}  icon={<Icon type={item.type == 2 ? "link":'folder-open'} />} key={item.id} />;
     });
   }
   render() {
     return (
       <div className='menuConfig'>
-        <div className='addMenu'>
-          <Button type="primary" onClick={this.showModal.bind(this, '添加', false)}>添加菜单</Button>
-        </div>
-        <div className='menuTree'>
-          <DirectoryTree multiple defaultExpandAll onSelect={this.onSelect} onExpand={this.onExpand}
-          >
-            {this.renderTreeNodes(this.state.treeData)}
-          </DirectoryTree>
-        </div>
-        <Modal title={this.state.title} visible={this.state.visible} onOk={this.handleOk.bind(this)} onCancel={this.onHide.bind(this)}
+        <Modal okButtonProps={{loading :this.state.addLoading}} title={this.state.title} visible={this.state.visible} onOk={this.handleOk.bind(this)} okText='确认'
+          cancelText="取消" onCancel={this.onHide.bind(this)} item={this.state.item}
         >
-          <AddFrom setChild={this.setFormChild.bind(this)} valid={this.valid.bind(this)} item={this.state.title == '编辑' ? this.state.item : ''}></AddFrom>
+          <AddFrom  setChild={this.setFormChild.bind(this)} valid={this.valid.bind(this)} item={this.state.title == '编辑' ? this.state.item : ''}></AddFrom>
         </Modal>
+        <Spin tip="数据加载中，请稍后" spinning={this.state.loading} wrapperClassName='skin'>
+          <div className='addMenu'>
+            <Button type="primary" onClick={this.showModal.bind(this, '添加', false)}>添加菜单</Button>
+          </div>
+          <div className='menuTree'>
+            <DirectoryTree 
+                showIcon
+                switcherIcon={<Icon type="down" />}
+                onSelect={this.onSelect} 
+                onExpand={this.onExpand} 
+                draggable
+                onDragEnter={this.onDragEnter.bind(this)} 
+                onDrop={this.onDrop.bind(this)}>
+              {this.renderTreeNodes(this.state.treeData)}
+            </DirectoryTree>
+          </div>        
+        </Spin>
       </div>
     );
   }
 }
 
 export default menuConfig
+

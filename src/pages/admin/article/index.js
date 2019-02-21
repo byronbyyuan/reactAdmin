@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import './index.less'
-import { Form, Input, Col, Select, Button, Switch, Upload, Icon, message } from 'antd';
+import { Form, Input, Select, Button, Upload,Switch, Icon, message,Spin } from 'antd';
 import SimpleMDE from 'simplemde'
 import marked from 'marked'
 import highlight from 'highlight.js'
+const qiniu = require('qiniu-js')
 marked.setOptions({
   renderer: new marked.Renderer(),
   gfm: true,
@@ -19,7 +20,7 @@ marked.setOptions({
 })
 const FormItem = Form.Item;
 const Option = Select.Option;
-
+let timeout
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -30,19 +31,7 @@ const formItemLayout = {
     sm: { span: 12 }
   }
 };
-function getBase64(img, callback) {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result));
-  reader.readAsDataURL(img);
-}
-function customRequest(file){
-  console.log(file)
-}
 function beforeUpload(file) {
-  const isJPG = file.type === 'image/jpeg';
-  if (!isJPG) {
-    message.error('You can only upload JPG file!');
-  }
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isLt2M) {
     message.error('Image must smaller than 2MB!');
@@ -53,15 +42,18 @@ class Article extends Component {
   constructor(props) {
     super(props)
     this.state = {
+        isAdd:true,
+        percent:0, 
+        CategoryList:[],
         title:"新增文章",
         loading:false,
         isEdit:false,
-        imageUrl:require('../../../assets/image/Nipic_18003253_20140215180014733125-1140x600.jpg'),
-        category:'',
-        type:true,
+        bookImg:'',
+        bookCategoryId:'',
+        privacy:false,
         content:"",
-        name:""
-
+        name:"",
+        ajaxLoading:false,
     }
   }
   componentDidMount() {
@@ -73,65 +65,104 @@ class Article extends Component {
         return marked(plainText);
       }
     })
-    const data = JSON.parse(localStorage.getItem('data'))
-    if (data){
-      this.setState(Object.assign(this.state, data[0],{title:'编辑文章'}))
-      this.smde.value(this.state.content)
+    this.getCategoryList()
+    if(this.props.match.params && this.props.match.params.articleId){
+      this.setState({title:'编辑文章',isAdd:false})
+      this.getArticle(this.props.match.params.articleId)
     }
-
-    console.log(this.state)
   }
-  handleSubmit(e) {
-    e.preventDefault();
-    let data = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : [];
+  async getArticle(id){
+    let data = await this.get('getArticle',{id})
+    if(data.code == 10001){
+      this.setState(Object.assign(this.state,data.data))
+      // console.log(marked(data.data.content))
+      this.smde.value(data.data.content)
+    }
+  }
+  handleSubmit(state) {
     let content = this.smde.value()
-    this.props.form.validateFields((err, values) => {
-      if (!err && content.length > 0) {
-        data.push({ content, ...values})
-        console.log(data)
-        localStorage.setItem('data', JSON.stringify(data))
-      }else{
-        !content.length && this.setState({content:''})
-        // console.log()
-        console.log('...............',this.state.content)
+    let submitUrl = 'createArticle'
+    this.props.form.validateFields(async (err, values) => {
+      if (!err) {
+          let body = {
+            ...values,
+            content,
+            bookImg:this.state.bookImg,
+            state
+          }
+          if(!this.state.isAdd){
+            submitUrl = 'updateArticle'
+            body.id = this.props.location.query.id
+          }
+          this.setState({ajaxLoading:true})
+          // console.log(marked(content))
+          let list = await this.post(submitUrl,body)
+          if(list.code == 10001){
+            message.success((this.state.isAdd ? '创建':'编辑') +'成功')
+            this.props.history.push('/admin/list')
+          }
+          this.setState({ajaxLoading:false})
       }
     });
   }
-  handleChange(info){
-    if (info.file.status === 'uploading') {
-      this.setState({ loading: true });
-      return;
+  async upload(info){
+    let _self = this
+    let tokenDate = await this.get('getQiniuToken')
+    if(!tokenDate.data)return
+    this.setState({bookImg:''})
+    var observable = qiniu.upload(info.file, 'article/' + new Date().getTime()+"_"+info.file.name, tokenDate.data,{},{
+      useCdnDomain: true,
+    })
+    var subscription = observable.subscribe({
+      next(res){
+        _self.setState({ loading: true,percent:res.total.percent});
+        console.log('next',res)
+      },
+      error(err){
+        console.log(err)
+        message.error('上传失败，请重新上传')
+        _self.setState({ loading: false ,percent:0});
+      }, 
+      complete(res){
+        info.onSuccess(res)
+        message.success('上传成功')
+        _self.setState({
+          bookImg:'https://image.oa.woatao.cn/' + res.key,
+          loading: false,
+          percent:0
+        })
+      }      
+    })
+  }  
+  handleSearch(v){
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
     }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, imageUrl => this.setState({
-        imageUrl,
-        loading: false
-      }));
-    }
+    timeout = setTimeout(()=>{this.getCategoryList(v)}, 300);    
   }
-  normFile(e){
-    console.log('Upload event:', e);
-    if (Array.isArray(e)) {
-      return e;
+  async getCategoryList(name=''){
+    let list = await this.get('getCategoryList',{page:1,size:5,name})
+    if(list.code == 10001){
+      this.setState({CategoryList:list.data.rows})
     }
-    return e && e.fileList;
   }
   render() {
     const { getFieldDecorator } = this.props.form;
     const uploadButton = (
       <div>
         <Icon type={this.state.loading ? 'loading' : 'plus'} />
-        <div className="ant-upload-text">Upload</div>
+        <div className="ant-upload-text">{this.state.loading ? parseInt(this.state.percent) + '%' :"上传"}</div>
       </div>
     );
-    const { imageUrl, type, category, name, content} = this.state;
+    const { bookImg, privacy, bookCategoryId, name} = this.state;
     return (
       <div className='Article'>
+        <Spin tip="数据加载中，请稍后" spinning={this.state.ajaxLoading} wrapperClassName='skin'>
         <div className='Article_body'>
           <div className='Article_body_title'><h2>{this.state.title}</h2></div>
           <div className='Article_body_content'>
-            <Form onSubmit={this.handleSubmit.bind(this)}>
+            <Form>
               <FormItem
                   {...formItemLayout}
                   label="名称"
@@ -149,24 +180,27 @@ class Article extends Component {
                   {...formItemLayout}
                   label="分类"
               >
-                {getFieldDecorator('category', {
-                  initialValue: category,
+                {getFieldDecorator('bookCategoryId', {
+                  initialValue: bookCategoryId,
                   rules: [
                     { required: true, message: '请选择分类'}
                   ]
                 })(
-                  <Select placeholder='请选择分类'>
-                    <Option value="1">javascript</Option>
-                    <Option value="2">node.js</Option>
-                    <Option value="3">nginx</Option>
+                  <Select placeholder='请选择分类'  defaultActiveFirstOption={false}
+                  showArrow={false} filterOption={false} showSearch onSearch={this.handleSearch.bind(this)}>
+                    {
+                      this.state.CategoryList.map((item)=>{
+                        return <Option value={item.id} key={item.id}>{item.name}</Option>
+                      })
+                    }
                   </Select>
                   )}
               </FormItem>
               <FormItem
                   {...formItemLayout}
-                  label="公开"
+                  label="设为隐私"
               >
-                {getFieldDecorator('type', { valuePropName: 'checked', initialValue:type})(
+                {getFieldDecorator('privacy', {initialValue:privacy})(
                   <Switch />
                 )}
               </FormItem>
@@ -175,22 +209,17 @@ class Article extends Component {
                   label="封面"
               >
                 <div className="dropbox">
-                  {getFieldDecorator('imgUrl', {
-                    valuePropName: 'fileList',
-                    getValueFromEvent: this.normFile
-                  })(
                     <Upload.Dragger
                         name="avatar"
+                        accept="image/*" 
+                        customRequest={this.upload.bind(this)}
                         listType="picture-card"
                         className="avatar-uploader"
                         showUploadList={false}
-                        customRequest={customRequest}
                         beforeUpload={beforeUpload}
-                        onChange={this.handleChange.bind(this)}
                     >
-                      {imageUrl ? <img src={imageUrl} alt="avatar" /> : uploadButton}
+                      {bookImg ? <img src={bookImg} alt="avatar" /> : uploadButton}
                     </Upload.Dragger>
-                    )}
                 </div>
               </FormItem>
               <FormItem
@@ -199,26 +228,20 @@ class Article extends Component {
                   label="内容"
               >
                 <textarea id="editor"></textarea>
-                {getFieldDecorator('name1', {
-                  initialValue: content,
-                  rules: [
-                    { required: true, message: '请填写内容' }
-                  ]
-                })(
-                  <Input className='hidden'/>
-                  )}
               </FormItem>
               <div className='btn_center'>
                 <FormItem
                     wrapperCol={{ span: 12, offset: 5 }}
                 >
-                <Button type="primary" htmlType="submit">发布</Button>
+                <Button type="primary"  onClick={this.handleSubmit.bind(this,false)}>草稿</Button>
+                <Button type="primary"  onClick={this.handleSubmit.bind(this,true)}>发布</Button>
                 <Button>取消</Button>
                 </FormItem>
               </div>
             </Form>
           </div>
         </div>
+        </Spin>
       </div>
     )
   }

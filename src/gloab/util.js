@@ -70,12 +70,12 @@ export const removeEmoji = str =>{
     return str;
 }
 
-export const getNowFormatDate = (format="YY-MM-DD") => {
+export const getNowFormatDate = (time = null,format="YY-MM-DD") => {
     const setFormat = (str) =>{
         if(str >= 1 && str <= 9) return  "0" + str;
         return str
     }
-    var date = new Date(),
+    var date = new Date(time),
     seperator1 = "-",
     seperator2 = ":",
     year =  date.getFullYear(),

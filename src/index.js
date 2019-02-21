@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import ReactDom from 'react-dom'
 import {BrowserRouter as Router, Route, Switch,Redirect} from 'react-router-dom'
-import lazyLoad from './plugins/lazyLoad'
 import * as Util from './gloab/util'
 import PrivateRoute from './plugins/PrivateRoute'
 
@@ -19,8 +18,9 @@ import errorPage from './pages/admin/404'
 import insert from './pages/admin/insert'
 import roleMsg from './pages/admin/myRole/roleMsg'
 import userInfo from './pages/admin/userInfo/index.js'
-
+import Comments from './pages/admin/comments'
 import Admin from './pages/admin'
+
 import {Provider} from 'react-redux'
 import store from './redux'
 import ajax,{post,get} from './server'
@@ -30,16 +30,18 @@ Component.prototype.post = post
 Component.prototype.get = get
 Component.prototype.Util = Util
 
+
 const AdminComponent = ({ match }) => {
     return (
         <Admin>
             <Route path={match.path + "/index"} exact component={Index}></Route>
-            <Route path={match.path + "/article/:aa?"} exact component={Article}></Route>
-            <Route path={match.path + "/list"} exact component={List}></Route>
-            <Route path={match.path + '/category'} component={AdminCategory}></Route>
+            <Route path={match.path + "/book/article/:articleId?"} exact component={Article}></Route>
+            <Route path={match.path + "/book/list"} exact component={List}></Route>
+            <Route path={match.path + '/book/category'} component={AdminCategory}></Route>
             <Route path={match.path + '/menuConfig'} component={menuConfig}></Route>
             <Route path={match.path + '/myRole'} component={Role}></Route>
             <Route path={match.path + '/role'} component={RoleDetail}></Route>
+            <Route path={match.path + '/book/comments/:articleId?'} component={Comments}></Route>
             <Route path={match.path + '/UserRole'} component={userRole}></Route>
             <Route path={match.path + '/insert/'} component={insert}></Route>
             <Route path={match.path + '/roleMsg/'} component={roleMsg}></Route>

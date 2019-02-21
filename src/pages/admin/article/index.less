@@ -4,14 +4,22 @@
         text-align: center;
         h2{
           color: @mainColor;
+          font-size: 14px !important;
         }
       }
       &_content{
         padding-top: 20px;
       }
+      .dropbox{
+        max-height: 200px;
+        .ant-upload-drag {
+          height: 200px;
+        }
+      }
       img{
         width: 100%;
         max-width: 100%;
+        max-height: 170px;
         height: auto;
       }
       .hidden{

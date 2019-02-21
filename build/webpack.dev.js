@@ -20,6 +20,9 @@ module.exports = {
     entry: {
         app: './src/index.js'
     },
+    externals : {
+        '$' : 'window.jQuery'
+    },    
     output: {
         path: path.resolve(__dirname, '../dist'),
         filename: '[name].js',
@@ -43,8 +46,8 @@ module.exports = {
             inject: true
         }),
         // new CopyWebpackPlugin([{
-        //     from: path.join(__dirname, './dll', '/fonts'),
-        //     to: path.join(__dirname, '../dist/fonts'),
+        //     from: path.join(__dirname, '../src/gloab', 'platelet-tips.json'),
+        //     to: path.join(__dirname, '../dist/assets/'),
         //     cache: true
         // },
         // {

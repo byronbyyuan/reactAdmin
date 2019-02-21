@@ -1,6 +1,7 @@
 *{
     padding: 0;
     margin: 0;
+    font-size: 12px !important;
   }
   .ant-dropdown-menu {
     margin-top: 18px !important;
@@ -10,6 +11,7 @@
     overflow: auto;
     // overflow-x: hidden;
     overflow-y: scroll;
+    min-width: 1250px;;
   }
   ol,li{
     list-style: none;
@@ -26,9 +28,10 @@
   }
   body::-webkit-scrollbar {
     width: 5px;
+    height: 5px;
   }
   body::-webkit-scrollbar-thumb {
-    background-color: #FD6720;
+    background-color: @mainColor;
     border-radius: 10px;
   }
   .button:hover{
@@ -46,3 +49,7 @@
     }
   }
   
+  pre{
+    background: aliceblue;
+    padding: 10px;
+  }
