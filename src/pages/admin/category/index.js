@@ -129,6 +129,7 @@ export class Category extends Component {
     this.setState({addLoading:true})
     let res = await this.post(url,body)
     if(res.code == 10001){
+      this.setState({addLoading:false})
       message.success(msg + '成功')
       this.hideModal()
       this.getList()
@@ -181,7 +182,7 @@ export class Category extends Component {
     let _self = this
     let tokenDate = await this.get('getQiniuToken')
     var observable = qiniu.upload(info.file, 'icon/' + new Date().getTime()+"_"+info.file.name, tokenDate.data,{},{
-      useCdnDomain: true,
+      useCdnDomain: true
     })
     var subscription = observable.subscribe({
       next(res) {
@@ -208,10 +209,10 @@ export class Category extends Component {
         <div className='he'>
           <div className='seace'>
             <Search
-              placeholder="请输入关键字"
-              enterButton="查询"
-              size="default"
-              onSearch={this.getList.bind(this)}
+                placeholder="请输入分类名称"
+                enterButton="查询"
+                size="default"
+                onSearch={this.getList.bind(this)}
             />          
           </div>
           <div className='addBtn' style={{'textAlign':"right"}}>
@@ -222,16 +223,17 @@ export class Category extends Component {
           <Table rowKey='id' loading={{
             tip:"数据加载中，请稍后",
             spinning:this.state.listLoading            
-          }} columns={this.state.columns} dataSource={this.state.data} bordered  onChange={this.handelChange.bind(this)} pagination={this.state.pagination} />
+          }} columns={this.state.columns} dataSource={this.state.data} bordered  onChange={this.handelChange.bind(this)} pagination={this.state.pagination}
+          />
         </div>
         <Modal
-          title={this.state.isAdd ? '编辑' : '新增'}
-          visible={this.state.visible}
-          onOk={this.edit.bind(this)}
-          onCancel={this.hideModal.bind(this)}
-          okText='确认'
-          cancelText="取消"
-          okButtonProps={
+            title={this.state.isAdd ? '编辑' : '新增'}
+            visible={this.state.visible}
+            onOk={this.edit.bind(this)}
+            onCancel={this.hideModal.bind(this)}
+            okText='确认'
+            cancelText="取消"
+            okButtonProps={
             { loading: this.state.addLoading }
           }
         >
@@ -253,7 +255,15 @@ export class Category extends Component {
                     </Button>
                 </Upload>
                 :
-                <Input placeholder={this.state.iconValidatorr ? "icon链接" : "请输入正确的url"} className={this.state.iconValidatorr ? "" : 'error'} onBlur={this.iconBlur.bind(this)} onChange={this.iconChange.bind(this)} value={this.state.icon} suffix={<Icon type={this.state.preview ? 'eye-invisible' : 'eye'} onClick={this.preview.bind(this)} />} />
+                <Input placeholder={this.state.iconValidatorr ? "icon链接" : "请输入正确的url"}
+                    className={this.state.iconValidatorr ? "" : 'error'}
+                    onBlur={this.iconBlur.bind(this)}
+                    onChange={this.iconChange.bind(this)}
+                    value={this.state.icon}
+                    suffix={<Icon type={this.state.preview ? 'eye-invisible' : 'eye'}
+                        onClick={this.preview.bind(this)}
+                            />}
+                />
             }
           </Form.Item>
           {

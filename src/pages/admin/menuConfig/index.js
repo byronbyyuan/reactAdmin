@@ -16,7 +16,7 @@ class menuConfig extends Component {
       title: '添加',
       item: "",
       loading:false,
-      addLoading:false,
+      addLoading:false
     }
   }
    componentDidMount() { //初始化
@@ -68,7 +68,7 @@ class menuConfig extends Component {
           resolve()
         }).catch(() => console.log('Oops errors!'));
       },
-      onCancel() {},
+      onCancel() {}
     });
     return false
   }
@@ -92,6 +92,7 @@ class menuConfig extends Component {
       this.onHide()
       this.getMyMenuList()
     }
+    this.setState({addLoading:false})
   }
   async addSubmit(data) { //添加目录
     if (this.state.item) {
@@ -103,6 +104,7 @@ class menuConfig extends Component {
       this.onHide()
       this.getMyMenuList()
     }
+    this.setState({addLoading:false})
   }
   setVisible(){
     console.log(this)
@@ -133,7 +135,6 @@ class menuConfig extends Component {
 
   }
   async onDrop(info){ //drop 触发时调用
-        // debugger
         const dropKey = info.node.props.eventKey; //目标元素
         const dragKey = info.dragNode.props.eventKey; //拖动的元素
         let dataquery = {
@@ -156,8 +157,11 @@ class menuConfig extends Component {
             {
               item.type == 1 ?
                 <span onClick={this.onAdd.bind(this, item)}>添加</span>
-                : item.childMenu ? '' :
-                <span onClick={this.onDelete.bind(this, item)}>删除</span>
+                : ''
+            }
+            {
+              item.childMenu ? '' :
+              <span onClick={this.onDelete.bind(this, item)}>删除</span>
             }
           </p>
         </div>
@@ -178,9 +182,9 @@ class menuConfig extends Component {
   }
   render() {
     return (
-      <div className='menuConfig'>
+      <div className='menuConfigire'>
         <Modal okButtonProps={{loading :this.state.addLoading}} title={this.state.title} visible={this.state.visible} onOk={this.handleOk.bind(this)} okText='确认'
-          cancelText="取消" onCancel={this.onHide.bind(this)} item={this.state.item}
+            cancelText="取消" onCancel={this.onHide.bind(this)} item={this.state.item}
         >
           <AddFrom  setChild={this.setFormChild.bind(this)} valid={this.valid.bind(this)} item={this.state.title == '编辑' ? this.state.item : ''}></AddFrom>
         </Modal>
@@ -196,7 +200,8 @@ class menuConfig extends Component {
                 onExpand={this.onExpand} 
                 draggable
                 onDragEnter={this.onDragEnter.bind(this)} 
-                onDrop={this.onDrop.bind(this)}>
+                onDrop={this.onDrop.bind(this)}
+            >
               {this.renderTreeNodes(this.state.treeData)}
             </DirectoryTree>
           </div>        

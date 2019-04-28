@@ -15,7 +15,10 @@ const menuList = [
     '/admin/myRole',
     '/admin/userRole',
     '/admin/roleMsg',
-    '/admin/userInfo'
+    '/admin/userInfo',
+    '/admin/insert/',
+    '/admin/book/view',
+    '/admin/book/category/8'
 ]
 class PrivateRoute extends Component {
     constructor(props, context) {
@@ -25,7 +28,6 @@ class PrivateRoute extends Component {
         }
     }
     async componentDidMount() {
-        console.log('9999999jjjjj', this.props)
         let userinfo = await this.get('getUser')
         if (userinfo.data) {
             this.props.setUser(userinfo.data)
@@ -35,9 +37,17 @@ class PrivateRoute extends Component {
                 return
             }
             this.props.userMenu(menulist.data)
-            console.log(menulist, history, '9999999jjjjj', this.props)
             let data = JSON.stringify(menulist)
             let url = this.props.history.location.pathname
+            console.log(url,'c2c2')
+            let arr = url.split('/')
+            console.log(url,'c2c888')
+            let num = (arr[arr.length-1])
+            if (!isNaN(Number(num))){
+                console.log(!isNaN(Number(num)),'bbbbuuuu')
+                url = url.slice(0,url.length-num.length)
+            }
+            console.log('6',url,'4')
             if (url === '/admin/insert/') {
                 url = this.props.history.location.search.split('=')[1]
             }
@@ -51,10 +61,11 @@ class PrivateRoute extends Component {
             //     isExist = true
             // }
             menuList.map(res=>{
-                if(res===url){
+                if(url.includes(res)){
                     isExist = true
                 }
             })
+
             if (isExist) {
                 this.setState({ isAuthenticated: true })
             } else {
@@ -73,14 +84,14 @@ class PrivateRoute extends Component {
             if (i === -1) {
                 return false
             } else {
-                if ((data[i - 1] === '"' && data[i + url.length] === '"') ||
-                    (data[i + url.length] === '/' && data[i + url.length + 1] === '"' && data[i - 1] === '"')) {
+                if ((data[i - 1] === '"' && (data[i + url.length] === '"'||data[i + url.length] === '/'))) {
                     return true
                 }
                 i++
             }
         }
     }
+    
     redirect(path = '/404') {
         const { history } = this.props
         this.setState({ isAuthenticated: false })
@@ -94,7 +105,7 @@ class PrivateRoute extends Component {
         let { component: Component, path = "/", exact = false, strict = false } = this.props;
         return this.state.isAuthenticated ? (
             <Route path={path} exact={exact} strict={strict} render={(props) => (<Component {...props} />)} />
-        ) : (<div>
+        ) : (<div className='errorPage'>
             <Spin className='skin' tip='数据加载中，请稍后'></Spin>
         </div>);
     }
@@ -124,6 +135,9 @@ const mapDispatch = (dispatch, ownProps) => {
             dispatch(user.delUser())
         },
         userMenu: (data) => {
+            if(JSON.stringify(data)==="{}"){
+                data = []
+            }
             dispatch(user.userMenu(data))
         }
     }

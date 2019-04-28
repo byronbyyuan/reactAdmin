@@ -1,4 +1,4 @@
-import { SETUSER, DELUSER, USERDATA, USERMENU, ROLELIST, MENULIST, INSERTURL, ROLEMSG, ROLESATUS ,ROLEDETATIL,SEARCHUSERNAME} from '../type'
+import { SETUSER, DELUSER, USERDATA, USERMENU, ROLELIST, MENULIST, INSERTURL, ROLEMSG, ROLESATUS ,ROLEDETATIL,SEARCHUSERNAME,LINK} from '../type'
 
 let defaultState = {
     user: {
@@ -22,7 +22,8 @@ let defaultState = {
         remark:'',
         roleMenu:[]
     },
-    searchName:''
+    searchName:'',
+    link:""
 }
 export default function user(state = defaultState, action) {
     switch (action.type) {
@@ -42,6 +43,7 @@ export default function user(state = defaultState, action) {
                 userData: action.data
             }
         case USERMENU:
+        console.log('ccvvvvvv', action.data)
             return {
                 ...state,
                 menuInfo: action.data
@@ -80,6 +82,11 @@ export default function user(state = defaultState, action) {
             return{
                 ...state,
                 searchName:action.data
+            }
+        case LINK: 
+            return{
+                ...state,
+                link:action.data
             }
         default:
             return state

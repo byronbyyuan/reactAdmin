@@ -27,3 +27,5 @@ export const ROLESATUS = 'ROLESTATUS'
 export const ROLEDETATIL = 'ROLEDETATIL'
 
 export const SEARCHUSERNAME = 'SEARCHUSERNAME'
+
+export const LINK ="LINK"

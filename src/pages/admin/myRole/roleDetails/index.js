@@ -35,8 +35,8 @@ class roleDetail extends Component {
             if (this.props.location.query) {
                 let value = { roleId: this.props.location.query.roleId }
                 this.get('getRole', value).then(res => {
+                    this.setState({ loading: false })
                     if (res.code === 10001) {
-                        this.setState({ loading: false })
                         this.setState({ roleInstruct: res.data.remark })
                         this.setState({ roleName: res.data.roleName })
                         let myData = []
@@ -242,6 +242,8 @@ class roleDetail extends Component {
                                     visible={this.state.visible}
                                     onOk={this.handleOk.bind(this)}
                                     onCancel={this.onHide.bind(this)}
+                                    okText="确认"
+                                    cancelText="取消"
                                 >
                                 </Modal>
                             </div>

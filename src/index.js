@@ -7,6 +7,7 @@ import PrivateRoute from './plugins/PrivateRoute'
 //后台
 import Article from './pages/admin/article'
 import List from './pages/admin/list'
+import View from './pages/admin/view'
 import Index from './pages/admin/chat'
 import AdminCategory from './pages/admin/category'
 import menuConfig from './pages/admin/menuConfig'
@@ -34,18 +35,19 @@ Component.prototype.Util = Util
 const AdminComponent = ({ match }) => {
     return (
         <Admin>
-            <Route path={match.path + "/index"} exact component={Index}></Route>
+            <Route path={match.path + "/index/:articleId"} exact component={Index}></Route>
             <Route path={match.path + "/book/article/:articleId?"} exact component={Article}></Route>
-            <Route path={match.path + "/book/list"} exact component={List}></Route>
-            <Route path={match.path + '/book/category'} component={AdminCategory}></Route>
-            <Route path={match.path + '/menuConfig'} component={menuConfig}></Route>
-            <Route path={match.path + '/myRole'} component={Role}></Route>
-            <Route path={match.path + '/role'} component={RoleDetail}></Route>
+            <Route path={match.path + "/book/list/:articleId"} exact component={List}></Route>
+            <Route path={match.path + "/book/view/:articleId"} exact component={View}></Route>
+            <Route path={match.path + '/book/category/:articleId'} component={AdminCategory}></Route>
+            <Route path={match.path + '/menuConfig/:articleId'} component={menuConfig}></Route>
+            <Route path={match.path + '/myRole/:articleId'} component={Role}></Route>
+            <Route path={match.path + '/role/:articleId'} component={RoleDetail}></Route>
             <Route path={match.path + '/book/comments/:articleId?'} component={Comments}></Route>
-            <Route path={match.path + '/UserRole'} component={userRole}></Route>
-            <Route path={match.path + '/insert/'} component={insert}></Route>
-            <Route path={match.path + '/roleMsg/'} component={roleMsg}></Route>
-            <Route path={match.path + '/userInfo/'} component={userInfo}></Route>
+            <Route path={match.path + '/UserRole/:articleId'} component={userRole}></Route>
+            <Route path={match.path + '/insert/:articleId'} component={insert}></Route>
+            <Route path={match.path + '/roleMsg/:articleId'} component={roleMsg}></Route>
+            <Route path={match.path + '/userInfo/:articleId'} component={userInfo}></Route>
         </Admin>
     )
 }

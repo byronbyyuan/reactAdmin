@@ -32,6 +32,9 @@ class useRole extends Component {
     componentDidMount() {
         console.log('bsdfjdsfdsbfdsvdsv1!!!!!',this.props)
     }
+    componentWillUnmount() {
+        this.props.roleStatus(false)
+    }
     searchName(name){
         if (!name.userName) return message.warning('用户名不能为空')
         this.getUserName(name)
@@ -187,12 +190,14 @@ class useRole extends Component {
                 extra={
                     <div className='iconStyle'>
                         <Icon type="eye" className='detailRole'
-                            onClick={this.onDetail.bind(this, data)} />
+                            onClick={this.onDetail.bind(this, data)}
+                        />
                         <Icon type="delete" className='deleteRole'
-                            onClick={this.onDelete.bind(this, data)} />
+                            onClick={this.onDelete.bind(this, data)}
+                        />
                     </div>
                 }
-            >
+                   >
                 <p>角色名：{data.role.roleName}</p>
                 <p>角色详情：{data.role.remark}</p>
                 <Modal
@@ -200,6 +205,8 @@ class useRole extends Component {
                     visible={this.state.deletaBox}
                     onOk={this.handleClickOk.bind(this, data)}
                     onCancel={this.handleClickCancel.bind(this)}
+                    okText="确认"
+                    cancelText="取消"
                 >
                     <p>
                         确认删除关联角色？
@@ -255,6 +262,10 @@ class useRole extends Component {
                             </div>
                             <div className='roleDetail'>
                                 <p className='roleText'>角色权限</p>
+                                {this.props.user.name===this.props.searchValue&&this.props.roleInfo.userRole.length==0?
+                                <div className='noData'>您当前没有角色配置</div>:null
+                            }
+                                
                                 {user}
                                 {this.props.user.name===this.props.searchValue?null:
                                 <div className='addUser' onClick={this.showModal.bind(this)}>
@@ -267,6 +278,8 @@ class useRole extends Component {
                                     visible={this.state.visible}
                                     onOk={this.handleOk.bind(this)}
                                     onCancel={this.handleCancel.bind(this)}
+                                    okText="确认"
+                                    cancelText="取消"
                                 >
                                     <Search
                                         placeholder="请输入查询的角色名"
@@ -311,6 +324,8 @@ class useRole extends Component {
                                     visible={this.state.noRepeat}
                                     onOk={this.handOk.bind(this)}
                                     onCancel={this.handCancel.bind(this)}
+                                    okText="确认"
+                                    cancelText="取消"
                                 >
                                     <ul>
                                         {repeatTip}

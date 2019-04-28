@@ -1,4 +1,4 @@
-import { SETUSER,DELUSER,USERDATA,USERMENU,ROLELIST,MENULIST ,INSERTURL,ROLEMSG,ROLESATUS,ROLEDETATIL,SEARCHUSERNAME} from '../type'
+import { SETUSER,DELUSER,USERDATA,USERMENU,ROLELIST,MENULIST ,INSERTURL,ROLEMSG,ROLESATUS,ROLEDETATIL,SEARCHUSERNAME,LINK} from '../type'
 
 const setUser = data => {
     console.log('data111111',data)
@@ -65,9 +65,14 @@ const roleDetail = data =>{
     }
 }
 const searchName = data =>{
-    console.log(data,'88888888888GGGGGGGG')
     return {
         type:SEARCHUSERNAME,
+        data
+    }
+}
+const setLink = data =>{
+    return {
+        type:LINK,
         data
     }
 }

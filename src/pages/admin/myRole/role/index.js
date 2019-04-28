@@ -59,6 +59,10 @@ class role extends Component {
                     title: '发布时间',
                     dataIndex: 'updatedAt',
                     key: 'updatedAt',
+                    render: (text, record) => {
+                        console.log(text,123131)
+                        return this.Util.getNowFormatDate(text)
+                      },
                     sorter: (a, b) => a.age - b.age
                 }, {
                     align: 'center',
@@ -107,6 +111,8 @@ class role extends Component {
         confirm({
             title: '你确定要删除当前角色吗?',
             content: '',
+            okText:"确认",
+            cancelText:"取消",
             onOk() {
                 that.confirm(key)
             },
@@ -157,6 +163,7 @@ class role extends Component {
                         show: true
                     })
                 } else {
+                    this.setState({ tableLoading: false })
                     message.success('删除角色失败，请重试');
                 }
             })
@@ -172,7 +179,7 @@ class role extends Component {
                 <div>
                     <Search
                         className='search'
-                        placeholder="请输入关键字"
+                        placeholder="请输入角色名"
                         enterButton="查询"
                         onSearch={value => this.getRoleList(1, 10, value)}
                     />

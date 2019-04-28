@@ -18,7 +18,7 @@ const api = {
         updateCategory:'/book/updateCategory', // 创建博客分类
         updateUser:'/user/updateUser',
         createArticle:'/book/createArticle', // 创建文章
-        updateArticle:'/book/updateArticle', // 更新文章
+        updateArticle:'/book/updateArticle' // 更新文章
     },
     get:{
         getRoleList:'/role/getRoleList', //获取角色列表
@@ -35,12 +35,12 @@ const api = {
         deleteCategory:'/book/deleteCategory',// 删除博客分类
         getArticle:'/book/getArticle', // 获取文章
         deleteArticle:'/book/deleteArticle', // 删除文章
-        deleteMenu:'/menu/deleteMenu',
         getCommentsList:'/book/getCommentsList', // 获取评论列表
         deleteComments:'/book/deleteComments', // 删除评论
         getUserName:'/user/getUserName', // 查询其他用户信息
         getMenuList:'/menu/getMenuList',
-        getRolePrev:'/role/getRolePrev' //获取角色菜单
+        getRolePrev:'/role/getRolePrev', //获取角色菜单
+        getMenuId:'/menu/getIdMneu' //通过id获取菜单详情
 }
 }
 

@@ -18,6 +18,9 @@ class Insert extends Component {
             this.props.insertUrl(value)
         }
     }
+    dianji(){
+        console.log(this.props.url)
+    }
     loaded(){
         // console.log(document.getElementById("myrame").style,document.getElementById("myrame").contentWindow.document.body.scrollHeight,'88888')
         // document.getElementById("myrame").style.height=document.getElementById("myrame").contentWindow.document.body.scrollHeight;
@@ -25,6 +28,7 @@ class Insert extends Component {
     render() {
         return (
             <div className='insert'>
+            {/* <div onClick={this.dianji.bind(this)}>dianjiwo</div> */}
                 <object name="myiframe"
                     id="myrame"
                     data={this.props.url}
@@ -33,7 +37,6 @@ class Insert extends Component {
                     height="100%"
                     height='500px'
                     frameBorder='0'
-                    onLoad={this.loaded.bind(this)}
                 >
                     <p>你的浏览器不支持iframe标签</p>
                 </object>

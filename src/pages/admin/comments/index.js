@@ -26,11 +26,11 @@ export default class Comments extends Component {
           align:'center',
           title: '用户名称',
           dataIndex: 'name',
-          key: 'name',
+          key: 'name'
         },{
             align: 'center',
             title: '评论内容',
-            dataIndex: 'text',
+            dataIndex: 'text'
           }, {
           align:'center',
           title: '创建时间',
@@ -41,11 +41,11 @@ export default class Comments extends Component {
         }, {
           align: 'center',
           title: '网址',
-          dataIndex: 'url',
+          dataIndex: 'url'
         }, {
           align: 'center',
           title: '邮箱',
-          dataIndex: 'email',
+          dataIndex: 'email'
         },{
           align: 'center',
           title: '操作',
@@ -63,7 +63,7 @@ export default class Comments extends Component {
   componentDidMount(){
     if(this.props.match.params && this.props.match.params.articleId){
         this.setState({
-            articleId:this.props.match.params.articleId,
+            articleId:this.props.match.params.articleId
         },()=>{
             this.getArticleList('', list =>{
                 this.setState({
@@ -109,7 +109,7 @@ export default class Comments extends Component {
           resolve()
         }).catch(() => console.log('Oops errors!'));
       },
-      onCancel() {},
+      onCancel() {}
     });
   }  
   handelChange(e){
@@ -139,7 +139,8 @@ export default class Comments extends Component {
                         <span className='label'>文章名称</span>    
                         <div className='label_content'>
                             <Select defaultActiveFirstOption={false} value={this.state.value}
-                                showArrow={false} allowClear filterOption={false} showSearch onSearch={this.handleSearch.bind(this)} onChange={this.seaceChange.bind(this)}>
+                                showArrow={false} allowClear filterOption={false} showSearch onSearch={this.handleSearch.bind(this)} onChange={this.seaceChange.bind(this)}
+                            >
                                     {
                                         this.state.articleList.map((item)=>{
                                             return <Option value={item.id} key={item.id}>{item.name}</Option>

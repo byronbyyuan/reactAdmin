@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import {
     Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Upload, message, Modal, Radio
 } from 'antd';
+const qiniu = require('qiniu-js')
 import { user } from '../../../redux/actions/index'
 const AutoCompleteOption = AutoComplete.Option;
 const RadioGroup = Radio.Group;
@@ -50,13 +51,16 @@ class userInfo extends Component {
             console.log(res)
             if (res&&res.code &&res.code=== 10001) {
               this.props.setUser(res.data)
-              let array = res.data.birthday.split('-')
-              alert(array)
+              let array = []
+              if (res.data.birthday) {
+                  array = res.data.birthday.split('-')
+              }
               this.setState(state=>{
                 state.value=res.data.sex
                 state.time.year = array[0]||1999
                 state.time.month = array[1]||1
                 state.time.day = array[2]||1
+                state.imageUrl = res.data.headUrl
                 return state
               })
             }
@@ -64,10 +68,10 @@ class userInfo extends Component {
         console.log("ttttttt", this.props.userInfo)
     }
     handleChange(info) {
-        getBase64(info.file.originFileObj, imageUrl => this.setState({
-            imageUrl,
-            loading: false
-        }));
+        // getBase64(info.file.originFileObj, imageUrl => this.setState({
+        //     imageUrl,
+        //     loading: false
+        // }));
     }
     onChange(e) {
         console.log('radio checked', e.target.value,);
@@ -83,8 +87,12 @@ class userInfo extends Component {
             let time = this.state.time
             values.birthday = time.year+'-'+time.month+'-'+time.day
             values.sex = this.state.value
+            values.headUrl = this.state.imageUrl
             this.post('updateUser',values).then(res=>{
                 console.log(res,'mmmmmmmmmm')
+                if(res.code===10001){
+                    this.props.history.push('index')
+                }
             })
         });
     }
@@ -95,6 +103,36 @@ class userInfo extends Component {
             return state.time[value] = event
         })
     }
+    async upload(info) {
+        console.log(info,'vvvvv')
+        // getBase64(info.file, imageUrl => this.setState({
+        //     imageUrl,
+        //     loading: false
+        // }));
+        let _self = this
+        let tokenDate = await this.get('getQiniuToken')
+        var observable = qiniu.upload(info.file, 'icon/' + new Date().getTime()+"_"+info.file.name, tokenDate.data,{},{
+          useCdnDomain: true
+        })
+        var subscription = observable.subscribe({
+          next(res) {
+            // ...
+            console.log('next', res)
+          },
+          error(err){
+            console.log(err)
+            message.error('上传失败，请重新上传')
+          },
+          complete(res) {
+            info.onSuccess(res)
+            message.success('上传成功')
+            _self.setState({
+              imageUrl: 'https://image.oa.woatao.cn/' + res.key,
+              iconCheck: 0
+            })
+          }
+        })
+      }
     render() {
         const uploadButton = (
             <div>
@@ -143,10 +181,11 @@ class userInfo extends Component {
             }
         };
         return (
-            <Form onSubmit={this.handleSubmit.bind(this)}>
+            <div className='userInfo'>
+                <Form onSubmit={this.handleSubmit.bind(this)}>
                 <Form.Item {...formItemLayout}>
                     <div className='upLoad'>
-                        <Upload
+                        {/* <Upload
                             name="avatar"
                             listType="picture-card"
                             className="avatar-uploader"
@@ -155,7 +194,16 @@ class userInfo extends Component {
                             onChange={this.handleChange.bind(this)}
                         >
                             {imageUrl ? <img src={imageUrl} alt="avatar" className='uploadImg' /> : uploadButton}
-                        </Upload>
+                        </Upload> */}
+                        <Upload
+                            name="avatar"
+                            listType="picture-card"
+                            className="avatar-uploader"
+                            accept="image/*"
+                            customRequest={this.upload.bind(this)}
+                        >
+                            {imageUrl ? <img src={imageUrl} alt="avatar" className='uploadImg' /> : uploadButton}
+                        </Upload>                       
                     </div>
                 </Form.Item>
                 <Form.Item label="用户名" {...formItemLayout}>
@@ -227,10 +275,12 @@ class userInfo extends Component {
                 <Form.Item wrapperCol={{
                     xs: { span: 25, offset: 11 },
                     sm: { span: 25, offset: 11 }
-                }}>
+                }}
+                >
                     <Button type="primary" htmlType="submit">提交</Button>
                 </Form.Item>
             </Form>
+            </div>
         )
     }
 }

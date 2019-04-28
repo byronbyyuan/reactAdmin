@@ -15,6 +15,7 @@ const devHost = 'localhost',
 const config = {
     //开发环境
     dev: {
+        //uploadPixfile:'http://mycode.free.idcfengye.com',
         uploadPixfile:'http://mycode.free.idcfengye.com',
         host: devHost,
         port: devPort,

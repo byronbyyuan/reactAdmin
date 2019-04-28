@@ -83,7 +83,7 @@ export class AdminList extends Component {
           align: 'center',
           title: '评论数',
           dataIndex: 'commentsNum',
-          key: 'control',
+          key: 'commentsNum',
           render:(text, record) => (
             <span>
               {
@@ -101,6 +101,8 @@ export class AdminList extends Component {
           render:(text, record) => (
             <span>
               <a href="javascript:;" onClick={this.to.bind(this,record.id)}>编辑</a>
+              <Divider type="vertical" />
+              <a href="javascript:;" onClick={this.to.bind(this,record.id,'view')}>预览</a>
               <Divider type="vertical" />
               <a href="javascript:;" onClick={this.deleteCallback.bind(this,record)}>删除</a>
             </span>
@@ -133,16 +135,25 @@ export class AdminList extends Component {
           resolve()
         }).catch(() => console.log('Oops errors!'));
       },
-      onCancel() {},
+      onCancel() {}
     });
   }  
-  to(id){
-    this.props.history.push({
-      pathname: '/admin/book/article/'+id,
-      query:{
-        id
-      }
-    })
+  to(id,type){
+    if (type === 'view') {
+      this.props.history.push({
+        pathname: '/admin/book/view/'+id,
+        query:{
+          id
+        }
+      })     
+    } else {
+      this.props.history.push({
+        pathname: '/admin/book/article/'+id,
+        query:{
+          id
+        }
+      })      
+    }
   }
   handelChange(pagination, filters, sorter){
     if(pagination.current != this.state.pagination.current){
@@ -198,7 +209,7 @@ export class AdminList extends Component {
                           label="名称"
                       >
                         {getFieldDecorator('name')(
-                          <Input placeholder="请输入关键字" />
+                          <Input placeholder="请输入文章名" />
                         )}
                       </FormItem>
                     </Col>
@@ -210,7 +221,8 @@ export class AdminList extends Component {
                         {getFieldDecorator('bookCategoryId', {
                         })(
                           <Select placeholder='请选择分类'  clear defaultActiveFirstOption={false}
-                          showArrow={false} filterOption={false} showSearch onSearch={this.handleSearch.bind(this)}>
+                              showArrow={false} filterOption={false} showSearch onSearch={this.handleSearch.bind(this)}
+                          >
                             {
                               this.state.CategoryList.map((item)=>{
                                 return <Option value={item.id} key={item.id}>{item.name}</Option>
@@ -228,7 +240,7 @@ export class AdminList extends Component {
                         {getFieldDecorator('privacy', {  initialValue: false })(
                           <RadioGroup name="privacy" >
                             <Radio value={false}>公开</Radio>
-                            <Radio value={true}>隐私</Radio>
+                            <Radio value>隐私</Radio>
                           </RadioGroup>
                         )}
                       </FormItem>
@@ -240,7 +252,7 @@ export class AdminList extends Component {
                       >
                       {getFieldDecorator('state', { initialValue: true })(
                         <RadioGroup name="state">
-                          <Radio value={true}>已发布</Radio>
+                          <Radio value>已发布</Radio>
                           <Radio value={false}>草稿</Radio>
                         </RadioGroup>
                       )}

@@ -37,6 +37,10 @@ const columns = [
     title: '发布时间',
     dataIndex: 'age',
     key: 'time',
+    render: (text, record) => {
+      console.log(text,123131)
+      return this.Util.getNowFormatDate(text)
+    },
     sorter: (a, b) => a.age - b.age
   },{
     align: 'center',
