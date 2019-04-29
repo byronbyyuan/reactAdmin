@@ -16,7 +16,12 @@ class menuConfig extends Component {
       title: '添加',
       item: "",
       loading:false,
-      addLoading:false
+      addLoading:false,
+      treeData1: [
+        { menuName: "菜单配置", url: "/admin/menuConfig/", id: '-1', type: 2 },
+        { menuName: "我的角色", url: "/admin/myRole/", id: '-2', type: 2 },
+        { menuName: "用户角色", url: "/admin/userRole/", id: '-3', type: 2 }
+      ]
     }
   }
    componentDidMount() { //初始化
@@ -27,6 +32,7 @@ class menuConfig extends Component {
       loading:true
     })
     let treeDataList = await this.get('getMyMenuList')
+    let treeData = this.state.treeData1.concat(treeDataList.data)
     let result = [
       {
         parentId:null,
@@ -34,7 +40,7 @@ class menuConfig extends Component {
         menuName:'后台管理',
         type:1,
         readOnly:true,
-        childMenu:treeDataList.data
+        childMenu:treeData
       }
     ]
     this.setState({
@@ -153,14 +159,14 @@ class menuConfig extends Component {
         <div className='menuConfigItem'>
           <span style={{lineHeight:'24px'}}>{item.menuName}</span>
           <p className={['action', item.type == 1 && 'actionType'].join(' ')}>
-            <span onClick={this.onEdit.bind(this, item)}>编辑</span>
+            {item.id > 0?<span onClick={this.onEdit.bind(this, item)}>编辑</span>:''}
             {
-              item.type == 1 ?
+              item.type == 1 && item.id > 0?
                 <span onClick={this.onAdd.bind(this, item)}>添加</span>
                 : ''
             }
             {
-              item.childMenu ? '' :
+              item.childMenu || item.id < 0? '' :
               <span onClick={this.onDelete.bind(this, item)}>删除</span>
             }
           </p>

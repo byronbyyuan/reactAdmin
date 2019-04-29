@@ -95,7 +95,7 @@ class Admin extends Component {
       }
       this.get('getMenuId', { id: num}).then(res=>{
         console.log(res,'gggg',res.data.url)
-        if (!res.data||(res.data.url.includes(this.props.location.pathname)===-1)) {
+        if (!res.data||(url.includes(res.data.url)===-1||res.data.url.includes(url)===-1)) {
           this.props.history.replace('/404')   
           return
         }
@@ -121,7 +121,12 @@ class Admin extends Component {
       this.props.insertUrl(value.url)
       this.props.history.push({ pathname: '/admin/insert/', search: 'src=' + value.url })
     } else {
-      this.props.history.push({ pathname: value.url + value.id,query:value.id})
+      if (value.url === '/admin/book/article/') {
+        this.props.history.push({ pathname: value.url })
+      } else {
+        console.log(value.url,'v8v8')
+        this.props.history.push({ pathname: value.url + value.id,query:value.id})
+      }
     }
   }
   logOut(e) {
